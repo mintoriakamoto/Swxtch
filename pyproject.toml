@@ -4,6 +4,10 @@ version = "0.1.0"
 description = "Rotate your Wi-Fi MAC address on Linux, like iOS's Private Wi-Fi Address"
 requires-python = ">=3.10"
 
+[project.optional-dependencies]
+test = ["pytest>=7.0", "pytest-cov>=4.0"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "black>=23.0", "ruff>=0.1"]
+
 [project.scripts]
 swxtch = "swxtch.cli:main"
 
