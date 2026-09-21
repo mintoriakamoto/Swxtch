@@ -5,6 +5,7 @@ import sys
 
 from . import netdev
 from .tui import main_curses
+from .license import check_license, get_license_info, get_subscription_status
 
 TERMINALS = [
     ["x-terminal-emulator", "-e"],
@@ -42,11 +43,22 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         help="Relaunch swxtch inside a new terminal window and exit this shell",
     )
     p.add_argument("--list", action="store_true", help="List detected Wi-Fi interfaces and exit")
+    p.add_argument("--license", action="store_true", help="Show license and trial status")
+    p.add_argument("--subscribe", action="store_true", help="Open subscription page")
     return p.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv if argv is not None else sys.argv[1:])
+
+    if args.license:
+        print(get_license_info())
+        return 0
+
+    if args.subscribe:
+        print("Opening subscription page...")
+        subprocess.Popen(["xdg-open", "https://swxtch.io/pricing"])
+        return 0
 
     if args.list:
         ifaces = netdev.list_wifi_interfaces()
@@ -56,6 +68,12 @@ def main(argv: list[str] | None = None) -> int:
         for name in ifaces:
             print(f"{name}\t{netdev.get_mac(name)}")
         return 0
+
+    # Check license before running
+    allowed, message = check_license()
+    if not allowed:
+        print(message, file=sys.stderr)
+        return 1
 
     iface = args.interface
     if not iface:

@@ -8,6 +8,7 @@ from typing import Optional
 
 from . import netdev
 from .crypto import verify_mac_change, verify_ip_change, log_verification
+from .license import check_license
 
 
 def get_current_ip(iface: str):
@@ -61,6 +62,12 @@ def boot_rotation(iface: Optional[str] = None) -> int:
     This is meant to be called by systemd service at startup.
     """
     print("[swxtch-boot] Starting MAC and IP rotation at boot...")
+
+    # Check license
+    allowed, message = check_license()
+    if not allowed:
+        print(f"[swxtch-boot] {message}", file=sys.stderr)
+        return 1
 
     # Check root
     if not netdev.is_root():

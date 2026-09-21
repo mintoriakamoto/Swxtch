@@ -2,6 +2,24 @@
 
 Complete setup instructions for boot-verified Wi-Fi privacy on Linux.
 
+## Pricing & Trial
+
+**Swxtch is FREE for 7 days.** No credit card required to start your trial.
+
+- **Free Trial:** 7 days full access (starts on first installation)
+- **Premium:** $9.99/month after trial ends
+- **Cancel anytime:** No long-term commitment required
+
+Check your trial status at any time:
+```bash
+swxtch --license
+```
+
+After your trial expires, upgrade to continue using Swxtch:
+```bash
+swxtch --subscribe
+```
+
 ## System Requirements
 
 | Component | Requirement | Why |

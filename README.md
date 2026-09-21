@@ -1,8 +1,10 @@
 # 🔒 Swxtch — Boot-Verified Wi-Fi Privacy
 
-**Your PC won't boot until encryption is verified and MAC/IP are changed.**
+**Enterprise-grade privacy for Linux. Boot-verified MAC/IP rotation with post-quantum encryption.**
 
-A production-grade Linux tool that rotates your Wi-Fi MAC address and IP on every boot with cryptographic verification (SHA3-256, MLKEM, FIPS 206). Like iOS's "Private Wi-Fi Address: Rotating" but with enterprise-grade post-quantum security.
+**🎉 Try free for 7 days. Then $9.99/month.** No credit card required for trial.
+
+Swxtch rotates your Wi-Fi MAC address and IP on every boot with cryptographic verification (SHA3-256, MLKEM, FIPS 206). Like iOS's "Private Wi-Fi Address: Rotating" but with enterprise-grade security. Networks can't track you across locations. ISPs can't correlate your sessions. Boot blocks until verification succeeds.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -31,13 +33,25 @@ A production-grade Linux tool that rotates your Wi-Fi MAC address and IP on ever
 - Cryptographic proof = verified changes logged
 - Boot blocks until verified = security guarantee
 
-## Quick Start
+## Pricing
 
-### 1️⃣ Install
+| Plan | Cost | Features |
+|------|------|----------|
+| **Free Trial** | $0/month | 7 days full access to all features |
+| **Premium** | $9.99/month | Boot-verified MAC/IP rotation, FIPS 206 encryption, priority support |
+
+**Start your free trial now** — no credit card required. After 7 days, choose to subscribe ($9.99/month) or uninstall. Cancel anytime.
+
+## Quick Start (Free Trial)
+
+### 1️⃣ Install & Start Trial
 
 ```bash
 pip install -e ".[crypto]"
+swxtch --license    # Shows your trial status
 ```
+
+✓ Trial clock starts on first run. 7 days full access.
 
 ### 2️⃣ Set Up Boot Verification
 
@@ -284,11 +298,14 @@ python3 -c "import oqs; print('✓ MLKEM available')" || echo "✗ SHA3-256 only
 pip install liboqs-python
 ```
 
-## Documentation
+## Documentation & Support
 
+- **[INSTALL.md](INSTALL.md)** — Detailed installation guide
 - **[BOOT-SERVICE.md](BOOT-SERVICE.md)** — Complete boot service setup and architecture
 - **[TESTING.md](TESTING.md)** — Verification procedures and test suite
-- **[INSTALL.md](INSTALL.md)** — Detailed installation guide
+- **[SECURITY.md](SECURITY.md)** — Threat model and cryptographic details
+- **Pricing & Trial:** Run `swxtch --license` to see your trial status
+- **Upgrade:** Run `swxtch --subscribe` to open the pricing page
 
 ## Performance
 
