@@ -4,7 +4,7 @@ import json
 from hashlib import sha3_256
 from pathlib import Path
 from datetime import datetime
-from typing import tuple
+from typing import Tuple, Optional
 
 try:
     import oqs
@@ -20,7 +20,7 @@ def sha3_256_hash(data: str) -> str:
     return sha3_256(data.encode()).hexdigest()
 
 
-def mlkem_encrypt(plaintext: str) -> tuple[str, str] | None:
+def mlkem_encrypt(plaintext: str) -> Optional[Tuple[str, str]]:
     """
     Encrypt with MLKEM (post-quantum, FIPS 206).
     Returns (ciphertext, public_key) or None if MLKEM unavailable.
@@ -80,7 +80,7 @@ def verify_mac_change(old_mac: str, new_mac: str, interface: str) -> dict:
     return record
 
 
-def verify_ip_change(old_ip: str | None, new_ip: str, interface: str) -> dict:
+def verify_ip_change(old_ip: Optional[str], new_ip: str, interface: str) -> dict:
     """
     Verify IP address change and return encrypted record.
     Uses SHA3-256 for hashing and optional MLKEM for post-quantum security.

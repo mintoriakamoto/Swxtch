@@ -4,12 +4,13 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import Optional
 
 from . import netdev
 from .crypto import verify_mac_change, verify_ip_change, log_verification
 
 
-def get_current_ip(iface: str) -> str | None:
+def get_current_ip(iface: str):
     """Get current IP address for interface."""
     try:
         result = subprocess.run(
@@ -54,7 +55,7 @@ def renew_dhcp(iface: str) -> bool:
             return False
 
 
-def boot_rotation(iface: str | None = None) -> int:
+def boot_rotation(iface: Optional[str] = None) -> int:
     """
     Run MAC rotation on boot, change IP, and verify with FIPS 206 crypto.
     This is meant to be called by systemd service at startup.
