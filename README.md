@@ -40,6 +40,8 @@ This installs the `swxtch` command.
 
 ## Usage
 
+### Interactive TUI (Manual)
+
 ```sh
 # Auto-detect your Wi-Fi interface, rotate every 15 minutes, run here
 sudo swxtch
@@ -53,6 +55,31 @@ sudo swxtch --window
 # List detected Wi-Fi interfaces
 swxtch --list
 ```
+
+### Automatic on Boot (Systemd Service with FIPS 206)
+
+Install to rotate MAC and IP automatically every time the system boots:
+
+```sh
+# Install with cryptographic verification support
+pip install -e ".[crypto]"
+
+# Set up systemd service
+sudo bash ./install-boot-service.sh
+
+# Enable and start
+sudo systemctl enable swxtch-boot
+sudo systemctl start swxtch-boot
+```
+
+Each boot will:
+- Generate new random MAC address
+- Renew DHCP lease for new IP
+- Verify changes with SHA3-256 hashing
+- Encrypt records with MLKEM (FIPS 206)
+- Log to `/var/log/swxtch/changes.log`
+
+See [BOOT-SERVICE.md](BOOT-SERVICE.md) for details.
 
 ### Keys inside the TUI
 
