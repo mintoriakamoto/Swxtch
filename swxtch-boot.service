@@ -1,0 +1,23 @@
+[Unit]
+Description=Swxtch - Boot-time MAC and IP rotation with FIPS 206 verification
+After=network-online.target
+Wants=network-online.target
+Documentation=man:swxtch(1)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/swxtch-boot
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=swxtch-boot
+
+# Security hardening
+NoNewPrivileges=no
+PrivateTmp=no
+ProtectSystem=no
+ProtectHome=no
+ReadWritePaths=/var/log/swxtch
+
+[Install]
+WantedBy=multi-user.target
