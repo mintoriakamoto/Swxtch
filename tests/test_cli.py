@@ -1,7 +1,7 @@
 """Tests for CLI interface."""
 
 from unittest.mock import patch, MagicMock
-from swxtch.cli import _parse_args, _find_terminal
+from swxtch.cli import _parse_args, _find_terminal, main
 
 
 class TestArgParsing:
@@ -40,6 +40,16 @@ class TestArgParsing:
         """Should parse list flag."""
         args = _parse_args(["--list"])
         assert args.list is True
+
+    def test_parse_license_flag(self):
+        """Should parse license flag."""
+        args = _parse_args(["--license"])
+        assert args.license is True
+
+    def test_parse_subscribe_flag(self):
+        """Should parse subscribe flag."""
+        args = _parse_args(["--subscribe"])
+        assert args.subscribe is True
 
     def test_parse_combined_flags(self):
         """Should handle combined flags."""
@@ -98,3 +108,37 @@ class TestTerminalDetection:
         result = _find_terminal()
 
         assert result is None
+
+
+class TestMainFunction:
+    """Test main() function with licensing."""
+
+    @patch("swxtch.cli.check_license")
+    @patch("swxtch.cli.get_license_info")
+    def test_license_flag_shows_status(self, mock_get_info, mock_check):
+        """Should show license status with --license flag."""
+        mock_get_info.return_value = "✓ Trial active (5 days remaining)"
+        result = main(["--license"])
+        assert result == 0
+        mock_get_info.assert_called_once()
+
+    @patch("swxtch.cli.check_license")
+    @patch("subprocess.Popen")
+    def test_subscribe_flag_opens_page(self, mock_popen, mock_check):
+        """Should open subscription page with --subscribe flag."""
+        result = main(["--subscribe"])
+        assert result == 0
+        mock_popen.assert_called_once()
+
+    @patch("swxtch.cli.check_license")
+    @patch("swxtch.cli.netdev")
+    def test_main_checks_license_before_running(self, mock_netdev, mock_check):
+        """Should check license before starting rotation."""
+        mock_check.return_value = (False, "Trial expired")
+        mock_netdev.is_root.return_value = True
+        mock_netdev.list_wifi_interfaces.return_value = ["wlan0"]
+
+        result = main([])
+
+        assert result == 1
+        mock_check.assert_called_once()
