@@ -300,12 +300,18 @@ pip install liboqs-python
 
 ## Documentation & Support
 
+- **[PRICING.md](PRICING.md)** — Detailed pricing, trial, and subscription FAQ
 - **[INSTALL.md](INSTALL.md)** — Detailed installation guide
 - **[BOOT-SERVICE.md](BOOT-SERVICE.md)** — Complete boot service setup and architecture
 - **[TESTING.md](TESTING.md)** — Verification procedures and test suite
 - **[SECURITY.md](SECURITY.md)** — Threat model and cryptographic details
-- **Pricing & Trial:** Run `swxtch --license` to see your trial status
-- **Upgrade:** Run `swxtch --subscribe` to open the pricing page
+
+### Check Your Trial
+
+```bash
+swxtch --license      # Shows trial status and days remaining
+swxtch --subscribe    # Opens pricing page to upgrade
+```
 
 ## Performance
 
