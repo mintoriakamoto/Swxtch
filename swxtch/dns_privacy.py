@@ -1,14 +1,17 @@
 """Advanced DNS privacy with multi-provider rotation and Tor integration.
 
 Implements:
-- DNS-over-Tor for complete query privacy
-- Multi-DNS provider rotation
-- Query batching to mask patterns
-- DNSSec validation
-- Local stub resolver
-- DNS query padding
+- DNS-over-Tor for complete query privacy (queries encrypted)
+- Multi-DNS provider rotation (provider can't track pattern)
+- Query batching to mask patterns (real queries hidden in batches)
+- DNSSec validation (prevents tampering)
+- Local stub resolver (internal DNS handling)
+- DNS query padding (hides query size patterns)
 
-🔐 SECURITY: ISP cannot see ANY DNS queries; all queries encrypted through Tor.
+🔐 SECURITY: Your DNS queries are encrypted and routed through private channels.
+ISP sees: encrypted tunnel data (no domain names visible)
+You see: normal DNS responses (seamless to user)
+Mullvad cannot see your original IP or queries even if they wanted to.
 """
 
 import json

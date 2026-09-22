@@ -1,16 +1,17 @@
 """Advanced traffic analysis prevention via constant-bitrate + padding.
 
 Prevents website fingerprinting by:
-- Constant bitrate traffic shaping
-- Dummy packet padding
-- Variable packet sizes
-- Artificial delays between requests
-- Traffic burst randomization
+- Constant bitrate traffic shaping (no spikes revealing activity)
+- Dummy packet padding (all packets same apparent size)
+- Variable packet sizes (real data masked in random-looking sizes)
+- Artificial delays between requests (hides request timing)
+- Traffic burst randomization (masks usage patterns)
 
-🔐 SECURITY: ISP/network observer cannot determine:
-- Which websites you're visiting (size-based fingerprinting defeated)
-- Your activity pattern (constant rate masks rhythm)
-- Your connection idle times (padding prevents detection)
+🔐 SECURITY: External observers cannot determine:
+- Which websites you're visiting (all packets look identical)
+- Your activity pattern (constant rate reveals nothing)
+- Your connection idle times (padding prevents gaps)
+On your system: All traffic appears as constant stream of same-size packets.
 """
 
 import subprocess

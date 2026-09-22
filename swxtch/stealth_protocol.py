@@ -2,12 +2,13 @@
 
 Creates a completely invisible network layer where:
 - Every packet has unique encryption (rotating per packet)
-- Addresses are random/stealth (not standard IP space)
-- Traffic looks like random noise (defeats DPI)
-- Geolocation impossible (addresses don't exist)
-- Even AI cannot identify the protocol
+- Addresses are random/stealth (not standard IP space, unroutable)
+- Traffic looks like random noise (defeats inspection)
+- Geolocation impossible (addresses don't map to real locations)
+- Unidentifiable - cannot determine what protocol is being used
 
-🔐 MILITARY GRADE: Even NSA/AI cannot determine what is being transmitted.
+🔐 MILITARY GRADE ENCRYPTION: All packets encrypted with unique keys.
+On your system, you see: f0a2c18e (encrypted number) instead of real IP.
 Packets are indistinguishable from random network noise.
 """
 

@@ -1,18 +1,20 @@
 """Advanced TLS fingerprinting prevention via ClientHello randomization.
 
 Prevents TLS fingerprinting by randomizing:
-- TLS version switching (1.2 ↔ 1.3)
-- Cipher suite order
-- Extension order (ClientHello)
-- Supported curves
-- Signature algorithms
-- ALPN preferences
-- HTTP User-Agent rotation (1000+ agents)
-- HTTP header randomization
-- Fake headers mimicking real browsers
+- TLS version switching (1.2 ↔ 1.3, never predictable)
+- Cipher suite order (different every connection)
+- Extension order in ClientHello (random each time)
+- Supported curves (changes per connection)
+- Signature algorithms (never same twice)
+- ALPN preferences (randomized)
+- HTTP User-Agent rotation (real browser agents)
+- HTTP header randomization (mimics real browsers)
+- Header order randomization (defeats pattern matching)
 
-🔐 SECURITY: TLS fingerprint changes per connection - cannot be tracked across time.
-ISP and MITM cannot identify you by TLS behavior.
+🔐 SECURITY: Your TLS handshake looks different every single time.
+What they see: constantly changing browser fingerprints (looks like different user each time)
+What you see: normal HTTPS connections working seamlessly
+Impossible to track same user across connections based on TLS behavior.
 """
 
 import json
