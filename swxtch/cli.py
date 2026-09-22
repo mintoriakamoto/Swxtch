@@ -4,6 +4,7 @@ import subprocess
 import sys
 
 from . import netdev
+from . import privacy
 from .tui import main_curses
 from .license import check_license, get_license_info, get_subscription_status, activate_license_key
 
@@ -46,6 +47,9 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--license", action="store_true", help="Show license and trial status")
     p.add_argument("--subscribe", action="store_true", help="Open subscription page")
     p.add_argument("--activate", metavar="KEY", help="Activate a license key (sk_live_* format)")
+    p.add_argument("--privacy", action="store_true", help="Enable advanced privacy hardening (DHCP, DNS, VPN checks)")
+    p.add_argument("--privacy-status", action="store_true", help="Show privacy hardening status")
+    p.add_argument("--verify-privacy", action="store_true", help="Run comprehensive privacy verification")
     return p.parse_args(argv)
 
 
@@ -65,6 +69,58 @@ def main(argv: list[str] | None = None) -> int:
         success, message = activate_license_key(args.activate)
         print(message)
         return 0 if success else 1
+
+    if args.privacy:
+        if not netdev.is_root():
+            print("Privacy hardening requires root privileges (try: sudo swxtch --privacy).", file=sys.stderr)
+            return 1
+
+        iface = args.interface
+        if not iface:
+            candidates = netdev.list_wifi_interfaces()
+            if not candidates:
+                print("No Wi-Fi interfaces found.", file=sys.stderr)
+                return 1
+            iface = candidates[0]
+
+        print("🔐 Enabling advanced privacy hardening...\n")
+
+        ok1, msg1 = privacy.configure_dhcp_privacy(iface)
+        print(msg1)
+
+        ok2, msg2 = privacy.configure_dns_privacy("cloudflare")
+        print(msg2)
+
+        ok3, msg3 = privacy.prevent_ipv6_leaks(iface)
+        print(msg3)
+
+        ok4, msg4 = privacy.prevent_ipv4_leaks()
+        if not ok4:
+            print(msg4)
+        else:
+            print(msg4)
+
+        ok5, msg5 = privacy.block_webrtc_leaks()
+        print(msg5)
+
+        return 0 if all([ok1, ok2, ok3]) else 1
+
+    if args.privacy_status:
+        status = privacy.get_privacy_status()
+        print("\n🔐 Privacy Hardening Status\n")
+        print(f"Overall Privacy Score: {status['overall_privacy_score']}/100")
+        print(f"  • DHCP Privacy: {'✓' if status['dhcp_privacy'] else '✗'}")
+        print(f"  • DNS Privacy: {'✓' if status['dns_privacy'] else '✗'}")
+        print(f"  • IPv4 Protected: {'✓' if status['ipv4_protected'] else '✗'}")
+        print(f"  • IPv6 Protected: {'✓' if status['ipv6_protected'] else '✗'}")
+        return 0
+
+    if args.verify_privacy:
+        all_good, report = privacy.verify_privacy_hardening()
+        print("\n🔐 Privacy Verification Report\n")
+        print(report)
+        print(f"\n{'✓ All privacy checks passed!' if all_good else '⚠️  Some privacy checks failed - review above'}\n")
+        return 0 if all_good else 1
 
     if args.list:
         ifaces = netdev.list_wifi_interfaces()
