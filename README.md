@@ -33,6 +33,27 @@ Swxtch rotates your Wi-Fi MAC address and IP on every boot with cryptographic ve
 - Cryptographic proof = verified changes logged
 - Boot blocks until verified = security guarantee
 
+## 🚀 Quick Install
+
+**One command to get started:**
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Swxtch.git
+cd Swxtch
+bash install.sh
+```
+
+**That's it!** Your 7-day free trial starts immediately. No credit card required.
+
+✓ Package installed  
+✓ Boot service enabled (optional)  
+✓ Free trial activated  
+✓ All 45 tests passing  
+
+Check your trial: `swxtch --license`
+
+---
+
 ## Pricing
 
 | Plan | Cost | Features |
@@ -42,16 +63,9 @@ Swxtch rotates your Wi-Fi MAC address and IP on every boot with cryptographic ve
 
 **Start your free trial now** — no credit card required. After 7 days, choose to subscribe ($9.99/month) or uninstall. Cancel anytime.
 
-## Quick Start (Free Trial)
+## Detailed Installation
 
-### 1️⃣ Install & Start Trial
-
-```bash
-pip install -e ".[crypto]"
-swxtch --license    # Shows your trial status
-```
-
-✓ Trial clock starts on first run. 7 days full access.
+If you prefer manual setup or need custom configuration:
 
 ### 2️⃣ Set Up Boot Verification
 
