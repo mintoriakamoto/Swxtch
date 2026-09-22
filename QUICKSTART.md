@@ -131,7 +131,7 @@ bash install.sh --trial-only
 
 ## Get Help
 
-- **Issues:** https://github.com/mintoriakamoto/Swxtch/issues
+- **Issues:** https://github.com/[GITHUB_ORG]/Swxtch/issues
 - **Email:** [SUPPORT_EMAIL]
 - **Discussion:** See SECURITY.md for threat model and FAQ
 
