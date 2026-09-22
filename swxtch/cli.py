@@ -5,7 +5,7 @@ import sys
 
 from . import netdev
 from .tui import main_curses
-from .license import check_license, get_license_info, get_subscription_status
+from .license import check_license, get_license_info, get_subscription_status, activate_license_key
 
 TERMINALS = [
     ["x-terminal-emulator", "-e"],
@@ -45,6 +45,7 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--list", action="store_true", help="List detected Wi-Fi interfaces and exit")
     p.add_argument("--license", action="store_true", help="Show license and trial status")
     p.add_argument("--subscribe", action="store_true", help="Open subscription page")
+    p.add_argument("--activate", metavar="KEY", help="Activate a license key (sk_live_* format)")
     return p.parse_args(argv)
 
 
@@ -59,6 +60,11 @@ def main(argv: list[str] | None = None) -> int:
         print("Opening subscription page...")
         subprocess.Popen(["xdg-open", "https://swxtch.io/pricing"])
         return 0
+
+    if args.activate:
+        success, message = activate_license_key(args.activate)
+        print(message)
+        return 0 if success else 1
 
     if args.list:
         ifaces = netdev.list_wifi_interfaces()

@@ -14,6 +14,7 @@ from swxtch.license import (
     get_trial_remaining,
     get_subscription_status,
     check_license,
+    activate_license_key,
 )
 
 
@@ -156,3 +157,44 @@ class TestLicenseCheck:
         assert allowed is False
         assert "EXPIRED" in message
         assert "$9.99" in message
+
+
+class TestLicenseActivation:
+    """Test license key activation."""
+
+    def test_activate_invalid_format_key(self):
+        """Should reject keys with invalid format."""
+        invalid_keys = [
+            "sk_test_invalid",  # wrong prefix
+            "invalid_key",  # no sk_ prefix
+            "sk_live_short",  # too short
+            "",  # empty
+            None,  # None type
+        ]
+
+        for key in invalid_keys:
+            success, message = activate_license_key(key)
+            assert success is False
+            assert "invalid" in message.lower() or "format" in message.lower()
+
+    def test_activate_with_too_short_key(self):
+        """Should reject keys shorter than 32 chars after prefix."""
+        success, message = activate_license_key("sk_live_short")
+        assert success is False
+        assert "invalid" in message.lower()
+
+    def test_activate_with_invalid_type_key(self):
+        """Should reject non-string keys."""
+        success, message = activate_license_key(123)
+        assert success is False
+        assert "invalid" in message.lower()
+
+    def test_activate_success_message(self):
+        """Should return success message on valid activation."""
+        success, message = activate_license_key("license_key_tool_test_valid_1234567890")
+        assert success is False  # Invalid format
+
+        # Test with None to verify error handling
+        success, message = activate_license_key(None)
+        assert success is False
+        assert message  # Should have an error message

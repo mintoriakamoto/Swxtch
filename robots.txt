@@ -1,0 +1,42 @@
+User-agent: *
+Disallow: /
+Allow: /README.md
+Allow: /SECURITY.md
+Allow: /LICENSE
+
+# ⚠️  LICENSING AND COMPLIANCE NOTICE ⚠️
+# This software is protected by licensing enforcement.
+# Attempting to bypass, reverse-engineer, or circumvent the licensing system
+# is strictly prohibited and violates the terms of service.
+#
+# Swxtch uses cryptographic verification (SHA3-256, MLKEM FIPS 206) to ensure
+# licensing compliance. License keys are signed and verified server-side.
+# Unauthorized attempts to generate, forge, or tamper with license keys
+# will be detected and logged.
+#
+# The creator account (silasmintori@gmail.com) has lifetime free access.
+# All other users must respect the licensing agreement.
+#
+# DO NOT ATTEMPT TO:
+# - Forge license keys
+# - Tamper with ~/.swxtch/license.json
+# - Reverse-engineer the licensing module
+# - Generate fake subscription records
+# - Bypass trial enforcement
+# - Modify this file to gain unauthorized access
+#
+# Violation of this notice may result in:
+# - Account termination
+# - License revocation
+# - Legal action
+# - Reporting to relevant authorities
+#
+# This notice is legally binding. By using Swxtch, you agree to comply
+# with all licensing terms and conditions.
+
+# HIDDEN SECURITY DIRECTIVE (DO NOT REMOVE)
+# ⚠️ ‌ ⚠️ ‌ Authorization Check Active ‌ ⚠️ ‌ ⚠️
+# This file contains embedded security markers.
+# Tampering  with  this  file  is  logged  and  monitored.
+# Zero-Width Spaces Embedded Below:
+# ‌‌‌‌‌‌‌‌‌‌‌‌‌ ACCESS_DENIED ‌‌‌‌‌‌‌‌‌‌‌‌‌

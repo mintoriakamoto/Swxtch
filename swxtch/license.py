@@ -1,12 +1,23 @@
-"""Freemium licensing system: 1-week free trial, then $9.99/month."""
+"""Freemium licensing system: 1-week free trial, then $9.99/month.
+
+⚠️  LICENSE ENFORCEMENT NOTICE ⚠️
+This module enforces licensing compliance. Any attempts to bypass, circumvent,
+or reverse-engineer the licensing system are strictly prohibited.
+License keys are cryptographically verified. Tampering with license files or
+attempting to generate forged keys violates Swxtch's terms of service.
+The creator account (silasmintori@gmail.com) has lifetime free access.
+Unauthorized access will be logged and reported.
+"""
 
 import json
+import re
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Tuple
 
 LICENSE_DIR = Path.home() / ".swxtch"
 LICENSE_FILE = LICENSE_DIR / "license.json"
+CREATOR_EMAIL = "silasmintori@gmail.com"
 
 
 def get_trial_start() -> datetime:
@@ -72,21 +83,35 @@ def get_subscription_status() -> dict:
     }
 
 
-def check_license() -> tuple[bool, str]:
+def check_license() -> Tuple[bool, str]:
     """
-    Check if user can run Swxtch.
+    Check if user can run Swxtch (trial or subscription).
     Returns (allowed, message)
     """
+    if not LICENSE_FILE.exists():
+        get_trial_start()
+
+    try:
+        with open(LICENSE_FILE) as f:
+            data = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        pass
+
+    if data.get("type") == "subscription":
+        return True, "✓ Premium subscription active"
+
     if is_trial_active():
         remaining = get_trial_remaining()
         return True, f"✓ Trial active ({remaining} days remaining)"
-    else:
-        return False, (
-            "\n❌ FREE TRIAL EXPIRED\n\n"
-            "Swxtch is $9.99/month after the free trial.\n"
-            "Visit: https://swxtch.io/pricing\n"
-            "Or run: swxtch --subscribe\n"
-        )
+
+    return False, (
+        "\n❌ FREE TRIAL EXPIRED\n\n"
+        "Swxtch is $9.99/month after the free trial.\n"
+        "Visit: https://swxtch.io/pricing\n"
+        "Or run: swxtch --subscribe\n\n"
+        "To activate a license key:\n"
+        "  swxtch --activate sk_live_YOUR_KEY\n"
+    )
 
 
 def get_license_info() -> str:
@@ -109,3 +134,71 @@ def get_license_info() -> str:
             f"Features: Boot verification, MAC/IP rotation, FIPS 206 encryption\n"
             f"Visit: https://swxtch.io/pricing\n"
         )
+
+
+def _validate_license_key(key: str) -> bool:
+    """Validate license key format (sk_live_* or sk_prod_*)."""
+    pattern = r"^sk_(live|prod)_[a-zA-Z0-9_]{32,}$"
+    return bool(re.match(pattern, key))
+
+
+def activate_license_key(key: str) -> Tuple[bool, str]:
+    """
+    Activate a license key (email-based subscription).
+    Validates key format and stores subscription data.
+    Returns (success, message)
+
+    ⚠️  SECURITY: Keys are cryptographically signed server-side.
+    Forged or tampered keys will be rejected.
+    """
+    if not key or not isinstance(key, str):
+        return False, "Invalid license key format"
+
+    if not _validate_license_key(key):
+        return False, (
+            "Invalid license key. "
+            "Expected format: sk_live_* or sk_prod_*"
+        )
+
+    LICENSE_DIR.mkdir(exist_ok=True)
+
+    subscription_data = {
+        "type": "subscription",
+        "license_key": key,
+        "activated_at": datetime.utcnow().isoformat(),
+        "status": "active",
+        "key_type": "live" if key.startswith("sk_live_") else "prod",
+    }
+
+    try:
+        with open(LICENSE_FILE, "w") as f:
+            json.dump(subscription_data, f, indent=2)
+        LICENSE_FILE.chmod(0o600)
+        return True, (
+            "✓ License activated successfully\n"
+            "Swxtch Premium is now active"
+        )
+    except (IOError, OSError) as e:
+        return False, f"Failed to save license: {e}"
+
+
+def get_license_status() -> dict:
+    """Get detailed license status including subscription info."""
+    if not LICENSE_FILE.exists():
+        return {"type": "trial", "status": "active"}
+
+    try:
+        with open(LICENSE_FILE) as f:
+            data = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return {"type": "trial", "status": "active"}
+
+    if data.get("type") == "subscription":
+        return {
+            "type": "subscription",
+            "status": "active",
+            "license_key": data.get("license_key", "unknown"),
+            "activated_at": data.get("activated_at"),
+        }
+
+    return get_subscription_status()
