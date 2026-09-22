@@ -38,7 +38,7 @@ Swxtch rotates your Wi-Fi MAC address and IP on every boot with cryptographic ve
 **One command to get started:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Swxtch.git
+git clone https://github.com/mintoriakamoto/Swxtch.git
 cd Swxtch
 bash install.sh
 ```
