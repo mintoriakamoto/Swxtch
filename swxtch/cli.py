@@ -5,6 +5,7 @@ import sys
 
 from . import netdev
 from . import privacy
+from . import sync
 from .tui import main_curses
 from .license import check_license, get_license_info, get_subscription_status, activate_license_key
 
@@ -50,6 +51,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--privacy", action="store_true", help="Enable advanced privacy hardening (DHCP, DNS, VPN checks)")
     p.add_argument("--privacy-status", action="store_true", help="Show privacy hardening status")
     p.add_argument("--verify-privacy", action="store_true", help="Run comprehensive privacy verification")
+
+    # Multi-device sync
+    p.add_argument("--pair-device", metavar="NAME:HOST", help="Pair a second PC (format: DeviceName:192.168.1.100)")
+    p.add_argument("--sync-status", action="store_true", help="Show multi-device sync status")
+    p.add_argument("--paired-devices", action="store_true", help="List all paired devices")
+    p.add_argument("--unpair-device", metavar="DEVICE_ID", help="Unpair a device")
     return p.parse_args(argv)
 
 
@@ -121,6 +128,56 @@ def main(argv: list[str] | None = None) -> int:
         print(report)
         print(f"\n{'✓ All privacy checks passed!' if all_good else '⚠️  Some privacy checks failed - review above'}\n")
         return 0 if all_good else 1
+
+    # Multi-device sync commands
+    if args.pair_device:
+        sync_mgr = sync.get_sync_manager()
+        try:
+            name, host = args.pair_device.split(":")
+            success, message = sync_mgr.pair_device(name.strip(), host.strip())
+            print(message)
+            return 0 if success else 1
+        except ValueError:
+            print("Format: --pair-device DeviceName:192.168.1.100", file=sys.stderr)
+            return 1
+
+    if args.sync_status:
+        sync_mgr = sync.get_sync_manager()
+        status = sync_mgr.get_sync_status()
+        print("\n🔄 Multi-Device Sync Status\n")
+        print(f"Device ID: {status['device_id']}")
+        print(f"Paired Devices: {status['paired_devices']}")
+        print(f"Online Devices: {status['online_devices']}")
+        print(f"Sync Enabled: {'✓' if status['sync_enabled'] else '✗'}")
+        return 0
+
+    if args.paired_devices:
+        sync_mgr = sync.get_sync_manager()
+        devices = sync_mgr.get_paired_devices()
+        if not devices:
+            print("No paired devices")
+            return 0
+
+        print("\n🔗 Paired Devices\n")
+        for device in devices:
+            status = "🟢" if device["is_online"] else "🔴"
+            print(f"{status} {device['name']} ({device['device_id'][:8]}...)")
+            print(f"   Host: {device['host']}:{device['port']}")
+            print(f"   Role: {device['role']}")
+            print(f"   Paired: {device['paired_at']}")
+        return 0
+
+    if args.unpair_device:
+        sync_mgr = sync.get_sync_manager()
+        if args.unpair_device in sync_mgr.devices:
+            device = sync_mgr.devices[args.unpair_device]
+            del sync_mgr.devices[args.unpair_device]
+            sync_mgr._save_devices()
+            print(f"✓ Device '{device.name}' unpaired")
+            return 0
+        else:
+            print(f"✗ Device not found: {args.unpair_device}", file=sys.stderr)
+            return 1
 
     if args.list:
         ifaces = netdev.list_wifi_interfaces()
