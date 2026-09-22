@@ -79,7 +79,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.subscribe:
         print("Opening subscription page...")
-        subprocess.Popen(["xdg-open", "https://swxtch.io/pricing"])
+        subprocess.Popen(["xdg-open", "https://[DOMAIN]/pricing"])
         return 0
 
     if args.activate:
