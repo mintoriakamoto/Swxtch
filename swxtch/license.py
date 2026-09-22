@@ -5,7 +5,7 @@ This  module  enforces  licensing  compliance.  Any  attempts  to  bypass,  circ
 or  reverse-engineer  the  licensing  system  are  strictly  prohibited.
 License  keys  are  cryptographically  verified.  Tampering  with  license  files  or
 attempting  to  generate  forged  keys  violates  Swxtch's  terms  of  service.
-The  creator  account  (support@swxtch.io)  has  lifetime  free  access.
+The  creator  account  has  lifetime  free  access.
 Unauthorized  access  will  be  logged  and  reported.
 
 ​​​ LICENSE_VERIFICATION_ACTIVE ​​​
@@ -21,7 +21,7 @@ from typing import Optional, Tuple
 
 LICENSE_DIR = Path.home() / ".swxtch"
 LICENSE_FILE = LICENSE_DIR / "license.json"
-CREATOR_EMAIL = "creator@swxtch.io"  # Masked for privacy
+CREATOR_EMAIL = "[CREATOR_ACCOUNT]"  # Masked for privacy
 
 
 def get_trial_start() -> datetime:
@@ -112,7 +112,7 @@ def check_license() -> Tuple[bool, str]:
     return False, (
         "\n❌ FREE TRIAL EXPIRED\n\n"
         "Swxtch is $9.99/month after the free trial.\n"
-        "Visit: https://swxtch.io/pricing\n"
+        "Visit: https://[DOMAIN]/pricing\n"
         "Or run: swxtch --subscribe\n\n"
         "To activate a license key:\n"
         "  swxtch --activate sk_live_YOUR_KEY\n"
@@ -136,7 +136,7 @@ def get_license_info() -> str:
             f"License: {data.get('license_key', 'unknown')}\n"
             f"Activated: {data.get('activated_at', 'unknown')}\n\n"
             f"All features unlocked. Enjoy boot-verified privacy!\n"
-            f"Visit: https://swxtch.io/account to manage subscription\n"
+            f"Visit: https://[DOMAIN]/account to manage subscription\n"
         )
 
     status = get_subscription_status()
@@ -145,7 +145,7 @@ def get_license_info() -> str:
             f"🎉 Swxtch Free Trial\n"
             f"Days remaining: {status['trial_remaining_days']}/7\n"
             f"Trial started: {status['trial_start']}\n\n"
-            f"After trial ends, upgrade at: https://swxtch.io/pricing\n"
+            f"After trial ends, upgrade at: https://[DOMAIN]/pricing\n"
             f"Price: $9.99/month (cancel anytime)\n"
         )
     else:
@@ -154,7 +154,7 @@ def get_license_info() -> str:
             f"Upgrade to Swxtch Premium to continue:\n"
             f"Price: $9.99/month\n"
             f"Features: Boot verification, MAC/IP rotation, FIPS 206 encryption\n"
-            f"Visit: https://swxtch.io/pricing\n"
+            f"Visit: https://[DOMAIN]/pricing\n"
         )
 
 

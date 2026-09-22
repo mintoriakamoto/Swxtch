@@ -42,13 +42,13 @@ DNS_OVER_TLS_SERVERS = [
 
 # Leak prevention configuration
 IPV4_LEAK_TESTS = [
-    "https://ipleak.net/json/",
+    "https://[PRIVACY_CHECK_SERVICE]/json/",
     "https://api.ipify.org?format=json",
     "https://ip.seeip.org/json",
 ]
 
 IPV6_LEAK_TESTS = [
-    "https://ipleak.net/json/",
+    "https://[PRIVACY_CHECK_SERVICE]/json/",
     "https://api64.ipify.org?format=json",
 ]
 
@@ -285,11 +285,11 @@ def block_webrtc_leaks() -> Tuple[bool, str]:
 
     # Block STUN servers (used by WebRTC)
     stun_servers = [
-        "stun.l.google.com",
-        "stun1.l.google.com",
-        "stun2.l.google.com",
-        "stun3.l.google.com",
-        "stun4.l.google.com",
+        "[STUN_SERVER_1]",
+        "[STUN_SERVER_2]",
+        "[STUN_SERVER_3]",
+        "[STUN_SERVER_4]",
+        "[STUN_SERVER_5]",
     ]
 
     blocked = 0
