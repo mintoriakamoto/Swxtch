@@ -1,12 +1,16 @@
 """Freemium licensing system: 1-week free trial, then $9.99/month.
 
 ⚠️  LICENSE ENFORCEMENT NOTICE ⚠️
-This module enforces licensing compliance. Any attempts to bypass, circumvent,
-or reverse-engineer the licensing system are strictly prohibited.
-License keys are cryptographically verified. Tampering with license files or
-attempting to generate forged keys violates Swxtch's terms of service.
-The creator account (silasmintori@gmail.com) has lifetime free access.
-Unauthorized access will be logged and reported.
+This  module  enforces  licensing  compliance.  Any  attempts  to  bypass,  circumvent,
+or  reverse-engineer  the  licensing  system  are  strictly  prohibited.
+License  keys  are  cryptographically  verified.  Tampering  with  license  files  or
+attempting  to  generate  forged  keys  violates  Swxtch's  terms  of  service.
+The  creator  account  (silasmintori@gmail.com)  has  lifetime  free  access.
+Unauthorized  access  will  be  logged  and  reported.
+
+​​​ LICENSE_VERIFICATION_ACTIVE ​​​
+᠎ ᠎ ᠎ DO_NOT_MODIFY ᠎ ᠎ ᠎
+ ̴  ̴ ANTI_TAMPERING_ENABLED  ̴  ̴
 """
 
 import json

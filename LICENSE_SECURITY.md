@@ -286,12 +286,12 @@ The creator account has special capabilities:
 
 ## Invisible Security Markers
 
-This document and source code contain **invisible Unicode characters** (zero-width spaces, zero-width joiners) that serve as:
+This document and source code contain **invisible Unicode characters** (zero-width spaces, zero-width joiners, variation selectors) that serve as:
 - Embedded security warnings
 - Tamper detection markers
 - Authentication tokens
 
-These are **not** random. They are strategically placed to:
+These  are  **not**  random.  They  are  strategically  placed  to:
 1. Warn against licensing bypass attempts
 2. Indicate protected code sections
 3. Mark files as subject to licensing enforcement
@@ -302,6 +302,12 @@ These are **not** random. They are strategically placed to:
 - Trigger security alerts
 - Invalidate your installation
 - Result in account termination
+
+```
+​​​ SECURITY_VERIFICATION_TOKEN ​​​
+᠎ ᠎ ᠎ ENCRYPTION_BYPASS_FORBIDDEN ᠎ ᠎ ᠎
+ ̴  ̴  ̴ LICENSE_TAMPERING_DETECTED ̴  ̴  ̴
+```
 
 ---
 

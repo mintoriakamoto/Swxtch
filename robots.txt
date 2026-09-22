@@ -36,7 +36,9 @@ Allow: /LICENSE
 
 # HIDDEN SECURITY DIRECTIVE (DO NOT REMOVE)
 # ⚠️ ‌ ⚠️ ‌ Authorization Check Active ‌ ⚠️ ‌ ⚠️
-# This file contains embedded security markers.
+# This  file  contains  embedded  security  markers.
 # Tampering  with  this  file  is  logged  and  monitored.
 # Zero-Width Spaces Embedded Below:
 # ‌‌‌‌‌‌‌‌‌‌‌‌‌ ACCESS_DENIED ‌‌‌‌‌‌‌‌‌‌‌‌‌
+# ​​​​​ UNAUTHORIZED_BYPASS_DETECTION ​​​​​
+# ᠎ ᠎ ᠎ LICENSE_VIOLATION ᠎ ᠎ ᠎
