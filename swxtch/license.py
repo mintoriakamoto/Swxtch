@@ -95,13 +95,14 @@ def check_license() -> Tuple[bool, str]:
     if not LICENSE_FILE.exists():
         get_trial_start()
 
+    data = {}
     try:
         with open(LICENSE_FILE) as f:
             data = json.load(f)
     except (IOError, json.JSONDecodeError):
         pass
 
-    if data.get("type") == "subscription":
+    if data.get("type") == "subscription" and data.get("status") == "active":
         return True, "✓ Premium subscription active"
 
     if is_trial_active():
@@ -120,8 +121,25 @@ def check_license() -> Tuple[bool, str]:
 
 def get_license_info() -> str:
     """Get formatted license information for --license flag."""
-    status = get_subscription_status()
+    if not LICENSE_FILE.exists():
+        get_trial_start()
 
+    try:
+        with open(LICENSE_FILE) as f:
+            data = json.load(f)
+    except (IOError, json.JSONDecodeError):
+        data = {}
+
+    if data.get("type") == "subscription" and data.get("status") == "active":
+        return (
+            f"✅ Swxtch Premium Active\n"
+            f"License: {data.get('license_key', 'unknown')}\n"
+            f"Activated: {data.get('activated_at', 'unknown')}\n\n"
+            f"All features unlocked. Enjoy boot-verified privacy!\n"
+            f"Visit: https://swxtch.io/account to manage subscription\n"
+        )
+
+    status = get_subscription_status()
     if status["trial_active"]:
         return (
             f"🎉 Swxtch Free Trial\n"

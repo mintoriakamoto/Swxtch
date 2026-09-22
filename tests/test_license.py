@@ -134,10 +134,12 @@ class TestSubscriptionStatus:
 class TestLicenseCheck:
     """Test license verification."""
 
+    @patch("swxtch.license.LICENSE_FILE")
     @patch("swxtch.license.is_trial_active")
     @patch("swxtch.license.get_trial_remaining")
-    def test_license_check_active_trial(self, mock_remaining, mock_trial_active):
+    def test_license_check_active_trial(self, mock_remaining, mock_trial_active, mock_file):
         """Should allow access during active trial."""
+        mock_file.exists.return_value = False
         mock_trial_active.return_value = True
         mock_remaining.return_value = 5
 
@@ -147,9 +149,11 @@ class TestLicenseCheck:
         assert "Trial active" in message
         assert "5" in message
 
+    @patch("swxtch.license.LICENSE_FILE")
     @patch("swxtch.license.is_trial_active")
-    def test_license_check_expired_trial(self, mock_trial_active):
+    def test_license_check_expired_trial(self, mock_trial_active, mock_file):
         """Should deny access after trial expires."""
+        mock_file.exists.return_value = False
         mock_trial_active.return_value = False
 
         allowed, message = check_license()
