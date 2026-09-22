@@ -13,7 +13,7 @@ Swxtch operates under a **freemium model** with the following terms:
 | **Free Trial** | 7 days, no credit card required |
 | **Paid Subscription** | $9.99/month after trial expires |
 | **Licensing Model** | Email-based license keys (sk_live_* format) |
-| **Creator Exemption** | silasmintori@gmail.com has lifetime free access |
+| **Creator Exemption** | support@swxtch.io has lifetime free access |
 
 ---
 
@@ -114,7 +114,7 @@ The following activities are **strictly prohibited** and violate the licensing t
 
 ## Creator Account Exemption
 
-**silasmintori@gmail.com** has special status:
+**support@swxtch.io** has special status:
 
 - ✅ Lifetime free access (no trial expiration)
 - ✅ Access to all features without licensing
@@ -261,7 +261,7 @@ If you discover a security vulnerability in Swxtch's licensing or other systems:
 
 ## Creator Account Powers
 
-### silasmintori@gmail.com
+### support@swxtch.io
 
 The creator account has special capabilities:
 
@@ -330,7 +330,7 @@ This agreement is effective as of your first installation of Swxtch.
 - **Licensing Questions**: license@swxtch.io
 - **Technical Support**: support@swxtch.io
 - **Security Issues**: security@swxtch.io
-- **Creator Inquiries**: silasmintori@gmail.com
+- **Creator Inquiries**: support@swxtch.io
 - **Legal/Compliance**: legal@swxtch.io
 
 **We take licensing seriously.** Thank you for respecting the terms of service and supporting the development of Swxtch.

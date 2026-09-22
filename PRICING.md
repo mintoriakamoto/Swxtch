@@ -93,7 +93,7 @@ No long-term commitment. Cancel your subscription at https://swxtch.io/account/s
 
 ### Refunds
 
-If you cancel within 7 days of subscribing, we offer a full refund. Contact **silasmintori@gmail.com** with your subscription ID.
+If you cancel within 7 days of subscribing, we offer a full refund. Contact **support@swxtch.io** with your subscription ID.
 
 ## FAQ
 
@@ -124,7 +124,7 @@ No. License verification is **entirely local**. Swxtch never contacts our server
 
 ### What if the subscription file gets corrupted?
 
-Contact support at **silasmintori@gmail.com** with your subscription ID. We can issue a new license file.
+Contact support at **support@swxtch.io** with your subscription ID. We can issue a new license file.
 
 ### Do I need to stay online to use Swxtch?
 
@@ -132,7 +132,7 @@ No. Swxtch works offline. The boot service and TUI work without internet. Only t
 
 ### Can I use Swxtch on multiple machines?
 
-Each machine tracks its trial independently. If you install Swxtch on a second machine, it gets its own 7-day trial. Subscriptions can cover multiple machines at the same $9.99/month price — contact **silasmintori@gmail.com** for details.
+Each machine tracks its trial independently. If you install Swxtch on a second machine, it gets its own 7-day trial. Subscriptions can cover multiple machines at the same $9.99/month price — contact **support@swxtch.io** for details.
 
 ### Is Swxtch open source?
 
@@ -151,7 +151,7 @@ All payments are processed securely through Stripe.
 
 ### During Free Trial
 
-Email: **silasmintori@gmail.com**
+Email: **support@swxtch.io**
 
 Response time: 24-48 hours
 
@@ -165,7 +165,7 @@ Response time: 12 hours (priority)
 
 ### Educational/Non-Profit Use
 
-Contact **silasmintori@gmail.com** for educational or non-profit licensing. We offer discounts for legitimate privacy advocacy and security research.
+Contact **support@swxtch.io** for educational or non-profit licensing. We offer discounts for legitimate privacy advocacy and security research.
 
 ### Large Deployments
 
@@ -190,4 +190,4 @@ We believe this model:
 
 ---
 
-**Questions?** Email **silasmintori@gmail.com** — we're here to help!
+**Questions?** Email **support@swxtch.io** — we're here to help!

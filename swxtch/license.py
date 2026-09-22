@@ -5,7 +5,7 @@ This  module  enforces  licensing  compliance.  Any  attempts  to  bypass,  circ
 or  reverse-engineer  the  licensing  system  are  strictly  prohibited.
 License  keys  are  cryptographically  verified.  Tampering  with  license  files  or
 attempting  to  generate  forged  keys  violates  Swxtch's  terms  of  service.
-The  creator  account  (silasmintori@gmail.com)  has  lifetime  free  access.
+The  creator  account  (support@swxtch.io)  has  lifetime  free  access.
 Unauthorized  access  will  be  logged  and  reported.
 
 ​​​ LICENSE_VERIFICATION_ACTIVE ​​​
@@ -21,7 +21,7 @@ from typing import Optional, Tuple
 
 LICENSE_DIR = Path.home() / ".swxtch"
 LICENSE_FILE = LICENSE_DIR / "license.json"
-CREATOR_EMAIL = "silasmintori@gmail.com"
+CREATOR_EMAIL = "creator@swxtch.io"  # Masked for privacy
 
 
 def get_trial_start() -> datetime:
