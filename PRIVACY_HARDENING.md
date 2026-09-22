@@ -141,7 +141,7 @@ swxtch --privacy
 
 **Test for IPv4 Leaks:**
 ```bash
-curl https://ipleak.net/json/  # Should show VPN IP, not real IP
+curl https://[PRIVACY_CHECK_SERVICE]/json/  # Should show VPN IP, not real IP
 curl https://api.ipify.org?format=json  # Should show VPN IP
 ```
 
@@ -189,7 +189,7 @@ curl https://api64.ipify.org?format=json
 **Test:**
 ```bash
 # WebRTC IP leak test
-https://ipleak.net/  # Should NOT show your real IP
+https://[PRIVACY_CHECK_SERVICE]/  # Should NOT show your real IP
 ```
 
 #### Chrome/Chromium
@@ -270,7 +270,7 @@ sudo ip route add 0.0.0.0/0 via 10.0.0.1 dev wg0
 sudo openvpn --config /path/to/config.ovpn
 
 # Verify:
-curl https://ipleak.net/json/  # Should show VPN IP
+curl https://[PRIVACY_CHECK_SERVICE]/json/  # Should show VPN IP
 ```
 
 #### Tor + Proxychains
@@ -283,7 +283,7 @@ sudo apt install tor proxychains4
 # Set: socks5 127.0.0.1 9050
 
 # Run app through Tor
-proxychains curl https://ipleak.net/json/
+proxychains curl https://[PRIVACY_CHECK_SERVICE]/json/
 ```
 
 ---
@@ -356,7 +356,7 @@ sudo tcpdump -i wlan0 -n 'udp port 53 or tcp port 853'
 ip route show | grep -E 'tun|tap|wg'
 
 # Test public IP matches VPN
-curl https://ipleak.net/json/
+curl https://[PRIVACY_CHECK_SERVICE]/json/
 ```
 
 ---
@@ -455,4 +455,4 @@ Freemium Licensing enforces these privacy protections are always active when Swx
 
 ---
 
-**Questions?** Email: support@swxtch.io
+**Questions?** Email: [SUPPORT_EMAIL]

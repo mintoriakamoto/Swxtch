@@ -67,7 +67,7 @@ Encapsulates ephemeral key for symmetric encryption
 
 **Do NOT open public issues for security vulnerabilities.**
 
-Report to: **support@swxtch.io**
+Report to: **[SUPPORT_EMAIL]**
 
 Include:
 - Description of vulnerability

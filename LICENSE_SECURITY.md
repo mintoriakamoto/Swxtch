@@ -13,7 +13,7 @@ Swxtch operates under a **freemium model** with the following terms:
 | **Free Trial** | 7 days, no credit card required |
 | **Paid Subscription** | $9.99/month after trial expires |
 | **Licensing Model** | Email-based license keys (sk_live_* format) |
-| **Creator Exemption** | support@swxtch.io has lifetime free access |
+| **Creator Exemption** | [SUPPORT_EMAIL] has lifetime free access |
 
 ---
 
@@ -114,7 +114,7 @@ The following activities are **strictly prohibited** and violate the licensing t
 
 ## Creator Account Exemption
 
-**support@swxtch.io** has special status:
+**[SUPPORT_EMAIL]** has special status:
 
 - ✅ Lifetime free access (no trial expiration)
 - ✅ Access to all features without licensing
@@ -152,8 +152,8 @@ This exemption is:
 
 - **Use Your Trial**: Full 7 days of free access to evaluate Swxtch
 - **Activate Your Key**: Enter your license key to unlock Premium
-- **Share Your Subscription**: Contact enterprise@swxtch.io for multi-device licensing
-- **Report Vulnerabilities**: Email security@swxtch.io with details (see below)
+- **Share Your Subscription**: Contact [ENTERPRISE_EMAIL] for multi-device licensing
+- **Report Vulnerabilities**: Email [SECURITY_EMAIL] with details (see below)
 - **Use the Creator Exemption**: If you are the creator (with proof)
 
 ---
@@ -166,7 +166,7 @@ If you discover a security vulnerability in Swxtch's licensing or other systems:
 
 1. **Do NOT** publicly disclose the vulnerability
 2. **Do NOT** create a proof-of-concept that exploits it
-3. **DO** email **security@swxtch.io** with:
+3. **DO** email **[SECURITY_EMAIL]** with:
    - Description of the vulnerability
    - Steps to reproduce
    - Potential impact
@@ -231,7 +231,7 @@ If you discover a security vulnerability in Swxtch's licensing or other systems:
 - Pursue legal action for commercial key sharing
 
 ### Q: How do I know my license key is real?
-**A:** License keys are sent via email from **keys@swxtch.io**. Verify:
+**A:** License keys are sent via email from **[KEYS_EMAIL]**. Verify:
 - Email sender matches exactly
 - Key format: `sk_live_` followed by 40+ alphanumeric characters
 - Activate with `swxtch --activate sk_live_YOUR_KEY`
@@ -248,20 +248,20 @@ If you discover a security vulnerability in Swxtch's licensing or other systems:
 **A:** Swxtch offers a 7-day refund period:
 1. Trial is free (no refund needed)
 2. If you subscribe and want a refund, request it within 7 days
-3. Email **refunds@swxtch.io** with your subscription ID
+3. Email **[REFUNDS_EMAIL]** with your subscription ID
 4. Full refund issued minus any transaction fees
 
 ### Q: How do I cancel my subscription?
 **A:** No lock-in contracts. Cancel anytime at:
-- **Website**: https://swxtch.io/account/subscriptions
-- **Email**: **cancel@swxtch.io** with your subscription ID
+- **Website**: https://[DOMAIN]/account/subscriptions
+- **Email**: **[CANCEL_EMAIL]** with your subscription ID
 - Effective immediately; no prorated refunds
 
 ---
 
 ## Creator Account Powers
 
-### support@swxtch.io
+### Creator Account
 
 The creator account has special capabilities:
 
@@ -327,11 +327,11 @@ This agreement is effective as of your first installation of Swxtch.
 
 ## Support & Questions
 
-- **Licensing Questions**: license@swxtch.io
-- **Technical Support**: support@swxtch.io
-- **Security Issues**: security@swxtch.io
-- **Creator Inquiries**: support@swxtch.io
-- **Legal/Compliance**: legal@swxtch.io
+- **Licensing Questions**: [LICENSE_EMAIL]
+- **Technical Support**: [SUPPORT_EMAIL]
+- **Security Issues**: [SECURITY_EMAIL]
+- **Creator Inquiries**: [SUPPORT_EMAIL]
+- **Legal/Compliance**: [LEGAL_EMAIL]
 
 **We take licensing seriously.** Thank you for respecting the terms of service and supporting the development of Swxtch.
 
