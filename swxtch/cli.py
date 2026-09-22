@@ -11,6 +11,7 @@ from . import tls_fingerprint
 from . import traffic_analysis
 from .tui import main_curses
 from .license import check_license, get_license_info, get_subscription_status, activate_license_key
+from .bitcoin_payments import get_bitcoin_manager
 
 TERMINALS = [
     ["x-terminal-emulator", "-e"],
@@ -50,7 +51,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--list", action="store_true", help="List detected Wi-Fi interfaces and exit")
     p.add_argument("--license", action="store_true", help="Show license and trial status")
     p.add_argument("--subscribe", action="store_true", help="Open subscription page")
-    p.add_argument("--activate", metavar="KEY", help="Activate a license key (sk_live_* format)")
+    p.add_argument("--activate", metavar="KEY", help="Activate a license key (sk_live_* or sk_btc_* format)")
+    p.add_argument("--pay-bitcoin", action="store_true", help="Generate Bitcoin payment request for 30-day license")
+    p.add_argument("--check-payment", metavar="TXID", help="Check Bitcoin payment confirmation status")
+    p.add_argument("--verify-btc-key", metavar="KEY", help="Verify Bitcoin license key validity")
+    p.add_argument("--auto-renew", metavar="KEY", help="Enable auto-renewal on Bitcoin license key")
+    p.add_argument("--disable-renewal", metavar="KEY", help="Disable auto-renewal on license key")
     p.add_argument("--privacy", action="store_true", help="Enable advanced privacy hardening (DHCP, DNS, VPN checks)")
     p.add_argument("--privacy-status", action="store_true", help="Show privacy hardening status")
     p.add_argument("--verify-privacy", action="store_true", help="Run comprehensive privacy verification")
@@ -280,6 +286,55 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(f"✗ Device not found: {args.unpair_device}", file=sys.stderr)
             return 1
+
+    # Bitcoin payment handling
+    if args.pay_bitcoin:
+        btc_mgr = get_bitcoin_manager()
+        payment_request = btc_mgr.generate_payment_request()
+        print("\n₿ Bitcoin Payment Request\n")
+        print(f"Wallet:  {payment_request['wallet_address'][:12]}...{payment_request['wallet_address'][-12:]}")
+        print(f"Amount:  {payment_request['amount_btc']} BTC")
+        print(f"Satoshi: {payment_request['amount_satoshi']}")
+        print(f"\nValidation QR Code (BIP21):")
+        print(f"{payment_request['qr_code_uri']}\n")
+        print("Wallet Options:")
+        print("  • Phantom (SOL/ETH) → bridge to Bitcoin")
+        print("  • MetaMask → add Bitcoin network")
+        print("  • Coinbase Wallet → native Bitcoin support")
+        print("  • Direct Bitcoin Wallet → scan QR code\n")
+        print(f"Request ID: {payment_request['request_id']}")
+        print("After payment, use: swxtch --check-payment TXID")
+        return 0
+
+    if args.check_payment:
+        btc_mgr = get_bitcoin_manager()
+        confirmed, msg = btc_mgr.check_payment_confirmation(args.check_payment)
+        print(f"\n₿ Payment Status: {args.check_payment}\n")
+        print(msg)
+        if confirmed:
+            print("\n✓ License key will be sent to your email")
+        return 0 if confirmed else 1
+
+    if args.verify_btc_key:
+        btc_mgr = get_bitcoin_manager()
+        valid, msg = btc_mgr.verify_license_key(args.verify_btc_key)
+        print(f"\n₿ Bitcoin License Key Status\n")
+        print(msg)
+        return 0 if valid else 1
+
+    if args.auto_renew:
+        btc_mgr = get_bitcoin_manager()
+        success, msg = btc_mgr.enable_auto_renewal(args.auto_renew)
+        print(f"\n₿ {msg}\n")
+        if success:
+            print("Your license will automatically renew for 30 days when it expires.")
+        return 0 if success else 1
+
+    if args.disable_renewal:
+        btc_mgr = get_bitcoin_manager()
+        success, msg = btc_mgr.disable_auto_renewal(args.disable_renewal)
+        print(f"\n₿ {msg}\n")
+        return 0 if success else 1
 
     if args.list:
         ifaces = netdev.list_wifi_interfaces()
