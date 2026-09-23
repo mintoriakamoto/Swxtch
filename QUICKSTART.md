@@ -90,7 +90,7 @@ sudo tail -f /var/log/swxtch/changes.log  # Rotation history
 ```
 
 ### Can I use it on multiple machines?
-Each machine gets its own 7-day trial. Premium subscriptions can cover multiple machines — contact **support@swxtch.io** for details.
+Each machine gets its own 7-day trial. Premium subscriptions can cover multiple machines — contact **[SUPPORT_EMAIL]** for details.
 
 ### How is my privacy protected?
 - MAC addresses → cryptographically hashed (SHA3-256)
@@ -131,8 +131,8 @@ bash install.sh --trial-only
 
 ## Get Help
 
-- **Issues:** https://github.com/mintoriakamoto/Swxtch/issues
-- **Email:** support@swxtch.io
+- **Issues:** https://github.com/[GITHUB_ORG]/Swxtch/issues
+- **Email:** [SUPPORT_EMAIL]
 - **Discussion:** See SECURITY.md for threat model and FAQ
 
 ---

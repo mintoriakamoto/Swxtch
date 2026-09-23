@@ -58,7 +58,7 @@ After your trial expires, upgrade online:
 swxtch --subscribe
 ```
 
-Or visit: https://swxtch.io/pricing
+Or visit: https://[DOMAIN]/pricing
 
 ## Upgrade to Premium
 
@@ -68,11 +68,11 @@ Or visit: https://swxtch.io/pricing
 swxtch --subscribe
 ```
 
-This opens https://swxtch.io/pricing in your default browser.
+This opens https://[DOMAIN]/pricing in your default browser.
 
 ### Manual Payment
 
-1. Go to https://swxtch.io/pricing
+1. Go to https://[DOMAIN]/pricing
 2. Choose Premium ($9.99/month)
 3. Enter payment method
 4. Your subscription activates immediately
@@ -85,7 +85,7 @@ Premium subscriptions are verified locally. After subscribing, Swxtch updates yo
 
 ### Cancel Anytime
 
-No long-term commitment. Cancel your subscription at https://swxtch.io/account/subscriptions.
+No long-term commitment. Cancel your subscription at https://[DOMAIN]/account/subscriptions.
 
 - Month-to-month billing
 - No early termination fees
@@ -93,7 +93,7 @@ No long-term commitment. Cancel your subscription at https://swxtch.io/account/s
 
 ### Refunds
 
-If you cancel within 7 days of subscribing, we offer a full refund. Contact **support@swxtch.io** with your subscription ID.
+If you cancel within 7 days of subscribing, we offer a full refund. Contact **[SUPPORT_EMAIL]** with your subscription ID.
 
 ## FAQ
 
@@ -124,7 +124,7 @@ No. License verification is **entirely local**. Swxtch never contacts our server
 
 ### What if the subscription file gets corrupted?
 
-Contact support at **support@swxtch.io** with your subscription ID. We can issue a new license file.
+Contact support at **[SUPPORT_EMAIL]** with your subscription ID. We can issue a new license file.
 
 ### Do I need to stay online to use Swxtch?
 
@@ -132,7 +132,7 @@ No. Swxtch works offline. The boot service and TUI work without internet. Only t
 
 ### Can I use Swxtch on multiple machines?
 
-Each machine tracks its trial independently. If you install Swxtch on a second machine, it gets its own 7-day trial. Subscriptions can cover multiple machines at the same $9.99/month price — contact **support@swxtch.io** for details.
+Each machine tracks its trial independently. If you install Swxtch on a second machine, it gets its own 7-day trial. Subscriptions can cover multiple machines at the same $9.99/month price — contact **[SUPPORT_EMAIL]** for details.
 
 ### Is Swxtch open source?
 
@@ -151,13 +151,13 @@ All payments are processed securely through Stripe.
 
 ### During Free Trial
 
-Email: **support@swxtch.io**
+Email: **[SUPPORT_EMAIL]**
 
 Response time: 24-48 hours
 
 ### Premium Subscribers
 
-Email: **support@swxtch.io**
+Email: **[SUPPORT_EMAIL]**
 
 Response time: 12 hours (priority)
 
@@ -165,15 +165,15 @@ Response time: 12 hours (priority)
 
 ### Educational/Non-Profit Use
 
-Contact **support@swxtch.io** for educational or non-profit licensing. We offer discounts for legitimate privacy advocacy and security research.
+Contact **[SUPPORT_EMAIL]** for educational or non-profit licensing. We offer discounts for legitimate privacy advocacy and security research.
 
 ### Large Deployments
 
-For organizations deploying Swxtch across many machines, contact **enterprise@swxtch.io** for volume licensing.
+For organizations deploying Swxtch across many machines, contact **[ENTERPRISE_EMAIL]** for volume licensing.
 
 ### Security Researchers
 
-If you're researching Swxtch's security, we offer free Premium access for the duration of your research. Email **research@swxtch.io** with details of your work.
+If you're researching Swxtch's security, we offer free Premium access for the duration of your research. Email **[RESEARCH_EMAIL]** with details of your work.
 
 ## Business Model
 
@@ -190,4 +190,4 @@ We believe this model:
 
 ---
 
-**Questions?** Email **support@swxtch.io** — we're here to help!
+**Questions?** Email **[SUPPORT_EMAIL]** — we're here to help!
