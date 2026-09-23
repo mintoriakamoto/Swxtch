@@ -60,7 +60,7 @@ Response (once confirmed):
 
 ### 4️⃣ Activate License Key
 
-Once payment is confirmed (usually 10 minutes), receive license key in email.
+Once payment is confirmed (usually 20 minutes for 2 confirmations), receive license key in email.
 
 ```bash
 swxtch --activate sk_btc_[your-license-key]
@@ -172,14 +172,14 @@ swxtch --disable-renewal sk_btc_[your-key]
 1. Install MetaMask: https://metamask.io
 2. Add Bitcoin network manually
 3. Send payment: 0.001 BTC
-4. Confirmation: ~10 minutes
+4. Confirmation: ~20 minutes (2 blockchain confirmations)
 
 ### Coinbase Wallet
 
 1. Install Coinbase Wallet
 2. Select Bitcoin network
 3. Send payment directly
-4. Confirmation: ~10 minutes
+4. Confirmation: ~20 minutes (2 blockchain confirmations)
 
 ### Hardware Wallet (Ledger/Trezor)
 
@@ -187,7 +187,7 @@ swxtch --disable-renewal sk_btc_[your-key]
 2. Open Bitcoin app
 3. Send to Swxtch address
 4. Confirm on device
-5. Confirmation: ~10 minutes
+5. Confirmation: ~20 minutes (2 blockchain confirmations)
 
 ---
 
@@ -205,7 +205,7 @@ Possible responses:
 ✓ Payment confirmed on blockchain
   → License key sent
 
-⏳ Payment pending confirmation (usually 10 minutes)
+⏳ Payment pending confirmation (usually 20 minutes for 2 confirmations)
   → Check back shortly
 
 ✗ Transaction not found
@@ -216,11 +216,11 @@ Possible responses:
 
 Bitcoin payments require **confirmation on the blockchain**:
 
-- **Pending**: 0 confirmations (immediately after payment)
-- **Confirmed**: 1+ confirmations (~10 minutes)
+- **Pending**: 0-1 confirmations (0-10 minutes)
+- **Confirmed**: 2+ confirmations (~20 minutes)
 - **Final**: 6+ confirmations (~60 minutes)
 
-Swxtch sends license key after **1 confirmation** (~10 minutes).
+Swxtch sends license key after **2 confirmations** (~20 minutes).
 
 ---
 
@@ -268,7 +268,7 @@ Example entry:
 **Problem**: Payment sent but not yet on blockchain
 
 **Solution**:
-- Wait ~10 minutes for blockchain confirmation
+- Wait ~20 minutes for 2 blockchain confirmations
 - Use `swxtch --check-payment TXID` to monitor
 - Check transaction on blockexplorer.com
 

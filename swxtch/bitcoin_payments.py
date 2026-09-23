@@ -171,7 +171,7 @@ class BitcoinPaymentManager:
             if data.get("status") == "confirmed":
                 return True, "✓ Payment confirmed on blockchain"
             elif data.get("status") == "pending":
-                return False, "⏳ Payment pending confirmation (usually 10 minutes)"
+                return False, "⏳ Payment pending confirmation (usually 20 minutes for 2 confirmations)"
             else:
                 return False, "Payment not found"
 
