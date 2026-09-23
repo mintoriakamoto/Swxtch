@@ -69,7 +69,7 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--deep-privacy", action="store_true", help="Enable ALL deep layer privacy (DNS+TLS+Traffic)")
 
     # Multi-device sync
-    p.add_argument("--pair-device", metavar="NAME:HOST", help="Pair a second PC (format: DeviceName:192.168.1.100)")
+    p.add_argument("--pair-device", metavar="NAME:HOST", help="Pair a second PC (format: DeviceName:[PRIVATE_IP])")
     p.add_argument("--sync-status", action="store_true", help="Show multi-device sync status")
     p.add_argument("--paired-devices", action="store_true", help="List all paired devices")
     p.add_argument("--unpair-device", metavar="DEVICE_ID", help="Unpair a device")
@@ -246,7 +246,7 @@ def main(argv: list[str] | None = None) -> int:
             print(message)
             return 0 if success else 1
         except ValueError:
-            print("Format: --pair-device DeviceName:192.168.1.100", file=sys.stderr)
+            print("Format: --pair-device DeviceName:[PRIVATE_IP]", file=sys.stderr)
             return 1
 
     if args.sync_status:

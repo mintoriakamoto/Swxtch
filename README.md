@@ -80,7 +80,7 @@ sudo systemctl enable swxtch-boot
 reboot
 # On boot:
 # → MAC rotates (aa:bb:cc:dd:ee:ff → 02:a1:b2:c3:d4:e5)
-# → IP renews (192.168.1.100 → 192.168.1.157)
+# → IP renews ([PRIVATE_IP_OLD] → [PRIVATE_IP_NEW])
 # → Both hashed & logged with MLKEM encryption
 # → Boot continues only after verification passes
 ```
@@ -162,16 +162,16 @@ wlan0 (aa:bb:cc...)
   → Generate: 02:a1:b2:...
   → Apply: ip link set dev wlan0 address 02:a1:b2:...
   → Down/Up: Interface cycles (1-2 sec)
-  → Hash: SHA3-256(02:a1:b2:...) = c2b8426...
+  → Hash: SHA3-256(02:a1:b2:...) = [HASH_MASKED]...
   → Sign: MLKEM-768 envelope
   → Log: /var/log/swxtch/changes.log
   ✓ Boot continues
 
 DHCP Renewal Flow:
-192.168.1.100
+[PRIVATE_IP_OLD]
   → Request: dhclient wlan0
-  → Assign: DHCP → 192.168.1.157
-  → Hash: SHA3-256(192.168.1.157) = 473ad89...
+  → Assign: DHCP → [PRIVATE_IP_NEW]
+  → Hash: SHA3-256([PRIVATE_IP_NEW]) = [HASH_MASKED]...
   → Sign: MLKEM-768 envelope
   → Log: /var/log/swxtch/changes.log
   ✓ Boot continues

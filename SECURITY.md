@@ -38,7 +38,7 @@ Boot-verified Wi-Fi privacy with cryptographic guarantees.
 
 ```
 Input: 02:a1:b2:c3:d4:e5
-Hash:  c2b8426565fd1e7fa0fce53b0a7a92c9...
+Hash:  [HASH_MASKED]...
 Properties:
   - One-way (cannot reverse)
   - Deterministic (same input → same output)

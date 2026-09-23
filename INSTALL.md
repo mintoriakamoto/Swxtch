@@ -197,11 +197,11 @@ Expected log entry:
   "timestamp": "2026-09-21T08:30:45.123456",
   "mac_verification": {
     "change_verified": true,
-    "new_mac_hash_sha3_256": "c2b8426565fd1e7fa0..."
+    "new_mac_hash_sha3_256": "[HASH_MASKED]..."
   },
   "ip_verification": {
     "change_verified": true,
-    "new_ip_hash_sha3_256": "473ad892bb7ff475cd..."
+    "new_ip_hash_sha3_256": "[HASH_MASKED]..."
   }
 }
 ```

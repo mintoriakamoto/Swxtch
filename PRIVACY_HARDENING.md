@@ -256,11 +256,11 @@ wg genkey | tee privatekey | wg pubkey > publickey
 
 # Create interface
 sudo ip link add dev wg0 type wireguard
-sudo ip addr add 10.0.0.2/24 dev wg0
+sudo ip addr add [VPN_PRIVATE_IP]/24 dev wg0
 sudo ip link set dev wg0 up
 sudo wg set wg0 private-key <(cat privatekey)
-sudo wg set wg0 peer <server-pubkey> endpoint <server-ip>:51820 allowed-ips 0.0.0.0/0
-sudo ip route add 0.0.0.0/0 via 10.0.0.1 dev wg0
+sudo wg set wg0 peer <server-pubkey> endpoint [VPN_SERVER_IP]:51820 allowed-ips 0.0.0.0/0
+sudo ip route add 0.0.0.0/0 via [VPN_GATEWAY_IP] dev wg0
 ```
 
 #### OpenVPN
