@@ -333,14 +333,25 @@ Real wallet address stored only in:
 
 ### Payment Log Security
 
-✅ **Payment history encrypted at rest**
+✅ **Payment history encrypted with AES-256 (Fernet)**
+
+- **Encryption**: AES-256 symmetric encryption using Fernet
+- **Key Derivation**: PBKDF2 (480,000 iterations) from Bitcoin wallet address
+- **Storage**: `/var/log/swxtch/bitcoin_payments.json` (encrypted binary format)
+- **File Permissions**: 0o600 (owner read/write only)
 
 ```bash
-# Permissions: 0o600 (owner read/write only)
+# File is encrypted — raw content is unreadable
 -rw------- /var/log/swxtch/bitcoin_payments.json
+# Contents: gAAAAABm...4k2jX...== (base64-encoded ciphertext)
 ```
 
-Access requires root/admin privileges.
+Access requires:
+1. Root/admin file access
+2. Bitcoin wallet address (encryption key derivation)
+3. Both factors needed to decrypt payment history
+
+**Data Protection**: Payment history is cryptographically protected even if the file is copied or accessed without authorization.
 
 ---
 

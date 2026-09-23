@@ -14,11 +14,15 @@ import os
 import secrets
 import hashlib
 import hmac
+import base64
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Tuple, Dict, Optional
 from dataclasses import dataclass
 import logging
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 LOG_DIR = Path("/var/log/swxtch")
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -64,23 +68,58 @@ class BitcoinPaymentManager:
         """Initialize Bitcoin payment manager."""
         self.wallet = BITCOIN_WALLET
         self.payments_log = LOG_DIR / "bitcoin_payments.json"
+        self._cipher_suite = self._derive_cipher_suite()
         self.payment_history = self._load_payment_history()
 
+    def _derive_cipher_suite(self) -> Fernet:
+        """Derive AES-256 encryption key from wallet address using PBKDF2HMAC."""
+        salt = b"swxtch_bitcoin_payments"
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=480_000,
+        )
+        wallet_bytes = self.wallet.encode() if isinstance(self.wallet, str) else self.wallet
+        key_material = kdf.derive(wallet_bytes)
+        key = base64.urlsafe_b64encode(key_material)
+        return Fernet(key)
+
+    def _encrypt_data(self, data: str) -> str:
+        """Encrypt data using AES-256 Fernet encryption."""
+        encrypted_bytes = self._cipher_suite.encrypt(data.encode())
+        return encrypted_bytes.decode()
+
+    def _decrypt_data(self, encrypted_data: str) -> str:
+        """Decrypt data using AES-256 Fernet encryption."""
+        try:
+            decrypted_bytes = self._cipher_suite.decrypt(encrypted_data.encode())
+            return decrypted_bytes.decode()
+        except Exception as e:
+            logger.error(f"Failed to decrypt payment history: {e}")
+            return ""
+
     def _load_payment_history(self) -> Dict:
-        """Load previous payment history."""
+        """Load and decrypt previous payment history."""
         if self.payments_log.exists():
             try:
-                with open(self.payments_log) as f:
-                    return json.load(f)
-            except (IOError, json.JSONDecodeError):
+                with open(self.payments_log, "r") as f:
+                    encrypted_content = f.read()
+                decrypted_content = self._decrypt_data(encrypted_content)
+                if decrypted_content:
+                    return json.loads(decrypted_content)
+            except (IOError, json.JSONDecodeError) as e:
+                logger.error(f"Failed to load payment history: {e}")
                 return {}
         return {}
 
     def _save_payment_history(self):
-        """Save payment history to log."""
+        """Encrypt and save payment history to log."""
         try:
+            json_str = json.dumps(self.payment_history, indent=2)
+            encrypted_content = self._encrypt_data(json_str)
             with open(self.payments_log, "w") as f:
-                json.dump(self.payment_history, f, indent=2)
+                f.write(encrypted_content)
             self.payments_log.chmod(0o600)
         except Exception as e:
             logger.error(f"Failed to save payment history: {e}")
