@@ -5,8 +5,12 @@ Handles:
 - License key generation after payment confirmation
 - 30-day license expiration and auto-renewal
 - Wallet integration (Phantom, Coinbase, MetaMask)
-- Payment verification via blockchain monitoring
+- Payment verification via Tor for IP anonymity
 - Secure license key distribution
+- AES-256 encryption at rest (PBKDF2-HMAC-SHA256)
+
+IP Anonymity: All blockchain verification routed through Tor SOCKS5 proxy.
+No IP address ever revealed to Bitcoin network nodes or blockchain APIs.
 """
 
 import json
@@ -23,6 +27,12 @@ import logging
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+try:
+    from .payment_anonymity import get_anonymous_router
+    HAS_ANONYMITY = True
+except ImportError:
+    HAS_ANONYMITY = False
 
 LOG_DIR = Path("/var/log/swxtch")
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -197,14 +207,7 @@ class BitcoinPaymentManager:
         return False, "License key not found"
 
     def check_payment_confirmation(self, transaction_id: str) -> Tuple[bool, str]:
-        """Check if payment has been confirmed on blockchain."""
-        # In production, integrate with:
-        # - Mempool.space API for real-time tx confirmation
-        # - Blockchain.com API
-        # - Your own Bitcoin node for verification
-        #
-        # This is a placeholder for actual blockchain monitoring
-
+        """Check if payment has been confirmed on blockchain (anonymously via Tor)."""
         if transaction_id in self.payment_history:
             data = self.payment_history[transaction_id]
             if data.get("status") == "confirmed":
@@ -213,6 +216,19 @@ class BitcoinPaymentManager:
                 return False, "⏳ Payment pending confirmation (usually 20 minutes for 2 confirmations)"
             else:
                 return False, "Payment not found"
+
+        if HAS_ANONYMITY:
+            router = get_anonymous_router()
+            confirmed, msg = router.verify_payment_anonymous(transaction_id)
+            if confirmed:
+                self.payment_history[transaction_id] = {
+                    "status": "confirmed",
+                    "verified_at": datetime.utcnow().isoformat(),
+                    "verification_method": "tor_anonymous",
+                }
+                self._save_payment_history()
+                return True, msg
+            return False, msg
 
         return False, "Transaction ID not found"
 
