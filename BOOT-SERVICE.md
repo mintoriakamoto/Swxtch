@@ -82,9 +82,9 @@ sudo journalctl -u swxtch-boot -f
   "ip_verification": {
     "type": "ip_change",
     "interface": "wlan0",
-    "old_ip": "192.168.1.100",
-    "new_ip": "192.168.1.157",
-    "new_ip_hash_sha3_256": "f4b1c9a2...",
+    "old_ip": "[PRIVATE_IP_OLD]",
+    "new_ip": "[PRIVATE_IP_NEW]",
+    "new_ip_hash_sha3_256": "[HASH_MASKED]...",
     "mlkem_encrypted": "...encrypted...",
     "fips_206_compliant": true
   }

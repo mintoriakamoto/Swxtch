@@ -333,14 +333,71 @@ Real wallet address stored only in:
 
 ### Payment Log Security
 
-✅ **Payment history encrypted at rest**
+✅ **Payment history encrypted with AES-256 (Fernet)**
+
+- **Encryption**: AES-256 symmetric encryption using Fernet
+- **Key Derivation**: PBKDF2 (480,000 iterations) from Bitcoin wallet address
+- **Storage**: `/var/log/swxtch/bitcoin_payments.json` (encrypted binary format)
+- **File Permissions**: 0o600 (owner read/write only)
 
 ```bash
-# Permissions: 0o600 (owner read/write only)
+# File is encrypted — raw content is unreadable
 -rw------- /var/log/swxtch/bitcoin_payments.json
+# Contents: gAAAAABm...4k2jX...== (base64-encoded ciphertext)
 ```
 
-Access requires root/admin privileges.
+Access requires:
+1. Root/admin file access
+2. Bitcoin wallet address (encryption key derivation)
+3. Both factors needed to decrypt payment history
+
+**Data Protection**: Payment history is cryptographically protected even if the file is copied or accessed without authorization.
+
+### IP Anonymity & Tor Routing
+
+✅ **All payment verification routed through Tor**
+
+Bitcoin transactions leak your IP address to blockchain nodes and APIs when verified. Swxtch routes ALL payment verification through Tor SOCKS5 proxy.
+
+**What's Protected:**
+- ✅ Payment confirmation checks (no IP to blockchain)
+- ✅ License key generation (no network fingerprinting)
+- ✅ Transaction verification (all Tor-routed)
+- ✅ No DNS leaks (Tor DNS)
+- ✅ No IP tracking by blockchain APIs
+
+**Setup:**
+```bash
+# Start Tor (if not running)
+tor --socks-port 9050 &
+
+# Swxtch will automatically detect and use Tor
+export SWXTCH_TOR_ANONYMOUS=true  # Default: enabled
+swxtch --check-payment <TXID>
+# Routes through Tor automatically
+```
+
+**How It Works:**
+1. Payment initiated (you control this with privacy wallet)
+2. Swxtch connects to blockchain API via Tor SOCKS5
+3. No direct connection = no IP leak
+4. Blockchain sees Tor exit node (shared IP, not yours)
+5. License key generated anonymously
+
+**Advanced:**
+```bash
+# Use custom Tor instance
+export TOR_SOCKS5_HOST=127.0.0.1
+export TOR_SOCKS5_PORT=9050
+
+# Verify anonymity status
+swxtch --check-payment <TXID>  # Will show Tor status
+```
+
+**Requirements:**
+- Install Tor: `apt-get install tor` or `brew install tor`
+- Start Tor: `tor --socks-port 9050 &`
+- Python dependency: `pip install requests[socks]`
 
 ---
 
