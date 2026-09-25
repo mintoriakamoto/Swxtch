@@ -511,27 +511,42 @@ swxtch --regenerate-key <ORIGINAL_TXID>
 
 ## Documentation Library
 
-**Getting Started:**
+**🚀 Getting Started:**
 | Document | Content |
 |----------|---------|
-| **[HOW_TO_RECEIVE_MONEY.md](HOW_TO_RECEIVE_MONEY.md)** | **START HERE** - Complete guide to receiving Bitcoin & Monero payments, wallet setup |
-| **[SYSTEM_STATUS.md](SYSTEM_STATUS.md)** | System overview, all components, security rating, test results, deployment status |
+| **[HOW_TO_RECEIVE_MONEY.md](HOW_TO_RECEIVE_MONEY.md)** | **START HERE** - Complete guide to receiving Bitcoin & Monero payments |
+| **[SYSTEM_STATUS.md](SYSTEM_STATUS.md)** | System overview, components, security rating, test results |
 
-**Reference Guides:**
+**🔍 Code Audit & Analysis:**
 | Document | Content |
 |----------|---------|
-| **[SECURITY_HARDENING.md](SECURITY_HARDENING.md)** | Complete 50+ layer security hardening, quantum resistance, impossible scenarios |
-| **[BITCOIN_PAYMENTS.md](BITCOIN_PAYMENTS.md)** | Bitcoin payment system guide, wallet setup, license management |
-| **[MONERO_SETUP.md](MONERO_SETUP.md)** | Monero wallet setup (4 options), subaddress strategy, RingCT, receiving XMR |
-| **[ANONYMITY_GUIDE.md](ANONYMITY_GUIDE.md)** | Privacy best practices, Tor/I2P/Yggdrasil/CJDNS, impossible-to-trace scenarios |
+| **[CODE_AUDIT.md](CODE_AUDIT.md)** | Complete code audit: discrepancies, real metrics, findings |
+| **[ACTUAL_FEATURES.md](ACTUAL_FEATURES.md)** | All 20+ implemented modules with verified status |
+| **[GAPS_AND_FIXES.md](GAPS_AND_FIXES.md)** | Remediation plan for all identified gaps |
+| **[UNDOCUMENTED_MODULES.md](UNDOCUMENTED_MODULES.md)** | Status of 13 modules still needing documentation |
 
-**Research & Analysis:**
+**🔐 Core Security & Cryptography:**
 | Document | Content |
 |----------|---------|
-| **[DEEP_ANONYMITY_RESEARCH.md](DEEP_ANONYMITY_RESEARCH.md)** | 15-layer anonymity analysis with all attack vectors |
-| **[ULTRA_DEEP_RESEARCH.md](ULTRA_DEEP_RESEARCH.md)** | Advanced cryptography (Layers 16-28), post-quantum timeline, supply chain privacy |
-| **[FRONTIER_INVISIBILITY.md](FRONTIER_INVISIBILITY.md)** | Frontier research (Layers 29-43), perfect secrecy, impossible-to-trace complete stack |
-| **[RESEARCH_COMPLETE.md](RESEARCH_COMPLETE.md)** | Executive summary, all 43+ layers documented, production-ready status |
+| **[SECURITY_HARDENING.md](SECURITY_HARDENING.md)** | 50+ security layers, quantum resistance, threat coverage |
+| **[CRYPTO_SUITE.md](CRYPTO_SUITE.md)** | Advanced cryptography (AEAD, KDF, Argon2id, PQC hybrid) ✅ NEW |
+| **[quantum_resistance.py](quantum_resistance.py)** | Post-quantum cryptography implementation |
+
+**🌐 Privacy & Network Anonymity:**
+| Document | Content |
+|----------|---------|
+| **[DNS_PRIVACY.md](DNS_PRIVACY.md)** | DNS-over-Tor, multi-provider rotation, query batching ✅ NEW |
+| **[ANONYMITY_GUIDE.md](ANONYMITY_GUIDE.md)** | Privacy best practices, Tor/I2P/Yggdrasil/CJDNS |
+| **[BITCOIN_PAYMENTS.md](BITCOIN_PAYMENTS.md)** | Bitcoin payment system guide, wallet setup |
+| **[MONERO_SETUP.md](MONERO_SETUP.md)** | Monero wallet setup, subaddress strategy |
+
+**📚 Advanced Features:**
+| Document | Content |
+|----------|---------|
+| **[DEEP_ANONYMITY_RESEARCH.md](DEEP_ANONYMITY_RESEARCH.md)** | 15-layer anonymity analysis with attack vectors |
+| **[ULTRA_DEEP_RESEARCH.md](ULTRA_DEEP_RESEARCH.md)** | Advanced cryptography, post-quantum timeline |
+| **[FRONTIER_INVISIBILITY.md](FRONTIER_INVISIBILITY.md)** | Frontier research (Layers 29-43), impossible-to-trace stack |
+| **[RESEARCH_COMPLETE.md](RESEARCH_COMPLETE.md)** | Executive summary, 43+ layers, production status |
 
 ### System Status
 
