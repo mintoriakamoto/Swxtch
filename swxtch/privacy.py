@@ -15,7 +15,7 @@ import json
 import subprocess
 import os
 from pathlib import Path
-from typing import Tuple, Optional, Dict
+from typing import Tuple, Dict
 from datetime import datetime
 
 PRIVACY_CONFIG_DIR = Path.home() / ".swxtch" / "privacy"
@@ -64,11 +64,7 @@ def _run(cmd: list[str]) -> Tuple[bool, str]:
     """Execute command and return (success, output)."""
     try:
         result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=10,
-            check=False
+            cmd, capture_output=True, text=True, timeout=10, check=False
         )
         return result.returncode == 0, result.stdout + result.stderr
     except (OSError, subprocess.TimeoutExpired) as e:
@@ -77,17 +73,17 @@ def _run(cmd: list[str]) -> Tuple[bool, str]:
 
 def _has_binary(binary: str) -> bool:
     """Check if binary is available in PATH."""
-    return subprocess.run(
-        ["which", binary],
-        capture_output=True,
-        check=False
-    ).returncode == 0
+    return (
+        subprocess.run(["which", binary], capture_output=True, check=False).returncode
+        == 0
+    )
 
 
 def generate_random_hostname() -> str:
     """Generate privacy-preserving hostname (no identifying info)."""
     import secrets
     import string
+
     chars = string.ascii_lowercase + string.digits
     return "".join(secrets.choice(chars) for _ in range(12))
 
@@ -95,10 +91,9 @@ def generate_random_hostname() -> str:
 def generate_random_dhcp_client_id() -> str:
     """Generate random DHCP client identifier (RFC 4361 compliant)."""
     import secrets
+
     # Type 0x01 for hardware type, then random bytes
-    client_id = "01:" + ":".join(
-        f"{b:02x}" for b in secrets.token_bytes(6)
-    )
+    client_id = "01:" + ":".join(f"{b:02x}" for b in secrets.token_bytes(6))
     return client_id
 
 
@@ -129,20 +124,20 @@ def configure_dhcp_privacy(iface: str) -> Tuple[bool, str]:
     # Configure DHCP privacy for the interface
     config_cmds = [
         # Disable sending hostname in DHCP
-        ["nmcli", "connection", "modify", iface,
-         "ipv4.dhcp-send-hostname", "no"],
-
+        ["nmcli", "connection", "modify", iface, "ipv4.dhcp-send-hostname", "no"],
         # Set random hostname for privacy
-        ["nmcli", "connection", "modify", iface,
-         "ipv4.dhcp-hostname", random_hostname],
-
+        ["nmcli", "connection", "modify", iface, "ipv4.dhcp-hostname", random_hostname],
         # Randomize client ID for privacy
-        ["nmcli", "connection", "modify", iface,
-         "ipv4.dhcp-client-id", generate_random_dhcp_client_id()],
-
+        [
+            "nmcli",
+            "connection",
+            "modify",
+            iface,
+            "ipv4.dhcp-client-id",
+            generate_random_dhcp_client_id(),
+        ],
         # Disable IPv6 DHCP hostname
-        ["nmcli", "connection", "modify", iface,
-         "ipv6.dhcp-send-hostname", "no"],
+        ["nmcli", "connection", "modify", iface, "ipv6.dhcp-send-hostname", "no"],
     ]
 
     results = []
@@ -195,11 +190,15 @@ def configure_dns_privacy(provider: str = "cloudflare") -> Tuple[bool, str]:
     # Use systemd-resolved for DoH/DoT (requires systemd 254+)
     if _has_binary("resolvectl"):
         # Set encrypted DNS
-        success, _ = _run([
-            "resolvectl", "dns", dns_ip,
-            "+605",  # DNSSEC enabled
-            "+tls-yes"  # Require TLS
-        ])
+        success, _ = _run(
+            [
+                "resolvectl",
+                "dns",
+                dns_ip,
+                "+605",  # DNSSEC enabled
+                "+tls-yes",  # Require TLS
+            ]
+        )
 
         if success:
             privacy_config = {
@@ -259,10 +258,7 @@ def prevent_ipv6_leaks(iface: str) -> Tuple[bool, str]:
         return False, "NetworkManager required for IPv6 privacy"
 
     # Disable IPv6 for maximum privacy
-    success, _ = _run([
-        "nmcli", "connection", "modify", iface,
-        "ipv6.method", "ignore"
-    ])
+    success, _ = _run(["nmcli", "connection", "modify", iface, "ipv6.method", "ignore"])
 
     if success:
         _run(["nmcli", "connection", "up", iface])
@@ -292,7 +288,6 @@ def block_webrtc_leaks() -> Tuple[bool, str]:
         "[STUN_SERVER_5]",
     ]
 
-    blocked = 0
     for server in stun_servers:
         # DNS resolution happens before firewall, so blocking IP would be ineffective
         # Users must configure browser to disable WebRTC
@@ -335,12 +330,14 @@ def get_privacy_status() -> Dict:
     status["ipv6_protected"] = "inet6" not in ipv6_output
 
     # Calculate privacy score (0-100)
-    score = sum([
-        25 if status["dhcp_privacy"] else 0,
-        25 if status["dns_privacy"] else 0,
-        25 if status["ipv4_protected"] else 0,
-        25 if status["ipv6_protected"] else 0,
-    ])
+    score = sum(
+        [
+            25 if status["dhcp_privacy"] else 0,
+            25 if status["dns_privacy"] else 0,
+            25 if status["ipv4_protected"] else 0,
+            25 if status["ipv6_protected"] else 0,
+        ]
+    )
     status["overall_privacy_score"] = score
 
     return status
@@ -369,7 +366,9 @@ def verify_privacy_hardening() -> Tuple[bool, str]:
 
     # Check 3: IPv4 leak protection
     _, route = _run(["ip", "route", "show"])
-    if any("tun" in line or "tap" in line or "wg" in line for line in route.splitlines()):
+    if any(
+        "tun" in line or "tap" in line or "wg" in line for line in route.splitlines()
+    ):
         checks.append("✓ IPv4 protected (VPN/tunnel active)")
     else:
         checks.append("⚠️  IPv6 leak risk: No VPN/tunnel detected")

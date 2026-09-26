@@ -23,6 +23,7 @@ class TestTLSFingerprintManager:
     def reset_singleton(self):
         """Reset global singleton before each test."""
         import swxtch.tls_fingerprint
+
         swxtch.tls_fingerprint._tls_manager = None
         yield
         swxtch.tls_fingerprint._tls_manager = None

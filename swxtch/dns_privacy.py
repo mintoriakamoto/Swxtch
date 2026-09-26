@@ -14,12 +14,10 @@ You see: normal DNS responses (seamless to user)
 Mullvad cannot see your original IP or queries even if they wanted to.
 """
 
-import json
 import secrets
 import subprocess
-import sys
 from pathlib import Path
-from typing import Tuple, Optional, Dict, List
+from typing import Tuple, Dict, List
 from dataclasses import dataclass
 import logging
 
@@ -65,6 +63,7 @@ DNS_CONFIG_DIR = Path("/etc/systemd/resolved.conf.d")
 @dataclass
 class DNSQuery:
     """Represents a DNS query for privacy analysis."""
+
     domain: str
     query_type: str  # A, AAAA, MX, etc.
     timestamp: float
@@ -92,9 +91,7 @@ class DNSPrivacyManager:
                 # Check if Tor is running
                 try:
                     result = subprocess.run(
-                        ["pgrep", "-f", "tor"],
-                        capture_output=True,
-                        timeout=2
+                        ["pgrep", "-f", "tor"], capture_output=True, timeout=2
                     )
                     available["tor"] = result.returncode == 0
                 except Exception:
@@ -107,7 +104,9 @@ class DNSPrivacyManager:
 
     def rotate_dns_provider(self) -> str:
         """Rotate to next available DNS provider."""
-        available = [p for p, is_available in self.providers_available.items() if is_available]
+        available = [
+            p for p, is_available in self.providers_available.items() if is_available
+        ]
 
         if not available:
             logger.error("No DNS providers available")
@@ -125,12 +124,13 @@ class DNSPrivacyManager:
         try:
             # Check if Tor is running
             result = subprocess.run(
-                ["pgrep", "-f", "tor"],
-                capture_output=True,
-                timeout=2
+                ["pgrep", "-f", "tor"], capture_output=True, timeout=2
             )
             if result.returncode != 0:
-                return False, "Tor not running. Install and start Tor first: sudo systemctl start tor"
+                return (
+                    False,
+                    "Tor not running. Install and start Tor first: sudo systemctl start tor",
+                )
 
             # Create systemd-resolved config for Tor DNS
             DNS_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
@@ -151,12 +151,15 @@ DNSSECNegativeTrustAnchors=
             subprocess.run(
                 ["systemctl", "reload", "systemd-resolved"],
                 capture_output=True,
-                check=True
+                check=True,
             )
 
             self.current_provider = "tor"
             logger.info("✓ DNS-over-Tor configured")
-            return True, "✓ DNS queries now routed through Tor - your ISP cannot see ANY domains you visit"
+            return (
+                True,
+                "✓ DNS queries now routed through Tor - your ISP cannot see ANY domains you visit",
+            )
 
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to configure DNS-over-Tor: {e}")
@@ -187,7 +190,7 @@ DNSSECNegativeTrustAnchors=
             subprocess.run(
                 ["systemctl", "reload", "systemd-resolved"],
                 capture_output=True,
-                check=True
+                check=True,
             )
 
             logger.info("✓ Multi-DNS rotation configured (Quad9 + Cloudflare)")
@@ -220,9 +223,7 @@ DNSSECNegativeTrustAnchors=
 
                 try:
                     subprocess.run(
-                        ["dig", "+short", domain],
-                        capture_output=True,
-                        timeout=2
+                        ["dig", "+short", domain], capture_output=True, timeout=2
                     )
                 except Exception:
                     pass  # Dummy query failed, that's OK
@@ -238,10 +239,7 @@ DNSSECNegativeTrustAnchors=
         """Validate DNSSEC is enabled to prevent DNS poisoning."""
         try:
             result = subprocess.run(
-                ["resolvectl", "status"],
-                capture_output=True,
-                text=True,
-                timeout=5
+                ["resolvectl", "status"], capture_output=True, text=True, timeout=5
             )
 
             if "DNSSEC setting: yes" in result.stdout:
@@ -267,10 +265,7 @@ DNSSECNegativeTrustAnchors=
         # Check DNSSEC
         try:
             result = subprocess.run(
-                ["resolvectl", "status"],
-                capture_output=True,
-                text=True,
-                timeout=5
+                ["resolvectl", "status"], capture_output=True, text=True, timeout=5
             )
             status["dnssec_enabled"] = "DNSSEC setting: yes" in result.stdout
         except Exception:

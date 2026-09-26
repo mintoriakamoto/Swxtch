@@ -15,16 +15,14 @@ All keys are post-quantum resistant and authenticated.
 import json
 import hashlib
 import hmac
-import os
 import secrets
-import struct
-from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Tuple, Optional, Dict
 import logging
 
-from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305, AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -59,6 +57,7 @@ SESSION_KEY_LIFETIME_HOURS = 24
 @dataclass
 class EncryptedData:
     """Wrapper for encrypted data with metadata."""
+
     ciphertext: bytes
     nonce: bytes
     tag: bytes
@@ -205,7 +204,9 @@ class PostQuantumCrypto:
             if age > (SESSION_KEY_LIFETIME_HOURS * 3600):
                 return None
 
-            plaintext = cipher.decrypt(encrypted.nonce, encrypted.ciphertext, associated_data)
+            plaintext = cipher.decrypt(
+                encrypted.nonce, encrypted.ciphertext, associated_data
+            )
             return plaintext
         except Exception as e:
             logger.error(f"Decryption failed: {e}")
@@ -249,7 +250,9 @@ class PostQuantumCrypto:
             if age > (SESSION_KEY_LIFETIME_HOURS * 3600):
                 return None
 
-            plaintext = cipher.decrypt(encrypted.nonce, encrypted.ciphertext, associated_data)
+            plaintext = cipher.decrypt(
+                encrypted.nonce, encrypted.ciphertext, associated_data
+            )
             return plaintext
         except Exception as e:
             logger.error(f"Decryption failed: {e}")
@@ -409,7 +412,6 @@ def verify_ip_change(old_ip: Optional[str], new_ip: str, interface: str) -> dict
 
 def log_verification(mac_record: dict, ip_record: dict) -> None:
     """Log verified MAC and IP changes to encrypted log file."""
-    crypto = get_crypto()
     LOG_DIR.mkdir(parents=True, exist_ok=True)
 
     log_file = LOG_DIR / "changes.log"

@@ -78,9 +78,12 @@ class TestTerminalDetection:
     @patch("shutil.which")
     def test_find_terminal_checks_in_order(self, mock_which):
         """Should check terminals in priority order."""
+
         # Only x-terminal-emulator exists
         def which_side_effect(cmd):
-            return "/usr/bin/x-terminal-emulator" if cmd == "x-terminal-emulator" else None
+            return (
+                "/usr/bin/x-terminal-emulator" if cmd == "x-terminal-emulator" else None
+            )
 
         mock_which.side_effect = which_side_effect
         result = _find_terminal()
@@ -90,6 +93,7 @@ class TestTerminalDetection:
     @patch("shutil.which")
     def test_find_terminal_prefers_first_available(self, mock_which):
         """Should prefer first available terminal."""
+
         # Multiple terminals available
         def which_side_effect(cmd):
             return f"/usr/bin/{cmd}" if cmd in ["gnome-terminal", "konsole"] else None

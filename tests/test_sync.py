@@ -30,10 +30,12 @@ def isolated_sync_manager():
         temp_sync_dir = Path(tmpdir)
         temp_devices_file = temp_sync_dir / "devices.json"
 
-        with patch("swxtch.sync.SYNC_DIR", temp_sync_dir), \
-             patch("swxtch.sync.DEVICES_FILE", temp_devices_file), \
-             patch("swxtch.sync.PAIRING_FILE", temp_sync_dir / "pairing.json"), \
-             patch("swxtch.sync.SYNC_LOG_FILE", temp_sync_dir / "sync.log"):
+        with (
+            patch("swxtch.sync.SYNC_DIR", temp_sync_dir),
+            patch("swxtch.sync.DEVICES_FILE", temp_devices_file),
+            patch("swxtch.sync.PAIRING_FILE", temp_sync_dir / "pairing.json"),
+            patch("swxtch.sync.SYNC_LOG_FILE", temp_sync_dir / "sync.log"),
+        ):
             # Reset global instance before each test
             sync_module._sync_manager = None
             yield
@@ -61,9 +63,7 @@ class TestDeviceSyncManager:
         """Should pair a new device."""
         manager = DeviceSyncManager()
         success, message = manager.pair_device(
-            "SecondPC",
-            "192.168.1.100",
-            role=DeviceRole.SECONDARY
+            "SecondPC", "192.168.1.100", role=DeviceRole.SECONDARY
         )
 
         assert success is True
@@ -116,7 +116,7 @@ class TestSyncMessage:
         message = manager.create_sync_message(
             SyncMessageType.MAC_ROTATION_SYNC,
             target_id,
-            {"interface": "wlan0", "mac": "aa:bb:cc:dd:ee:ff"}
+            {"interface": "wlan0", "mac": "aa:bb:cc:dd:ee:ff"},
         )
 
         assert message.message_type == SyncMessageType.MAC_ROTATION_SYNC
@@ -131,9 +131,7 @@ class TestSyncMessage:
 
         target_id = list(manager.devices.keys())[0]
         message = manager.create_sync_message(
-            SyncMessageType.MAC_ROTATION_SYNC,
-            target_id,
-            {}
+            SyncMessageType.MAC_ROTATION_SYNC, target_id, {}
         )
 
         assert message.version == PROTOCOL_VERSION
@@ -145,14 +143,10 @@ class TestSyncMessage:
 
         target_id = list(manager.devices.keys())[0]
         msg1 = manager.create_sync_message(
-            SyncMessageType.MAC_ROTATION_SYNC,
-            target_id,
-            {}
+            SyncMessageType.MAC_ROTATION_SYNC, target_id, {}
         )
         msg2 = manager.create_sync_message(
-            SyncMessageType.MAC_ROTATION_SYNC,
-            target_id,
-            {}
+            SyncMessageType.MAC_ROTATION_SYNC, target_id, {}
         )
 
         assert msg2.sequence > msg1.sequence
@@ -168,9 +162,7 @@ class TestSyncMessage:
 
         target_id = list(manager1.devices.keys())[0]
         message = manager1.create_sync_message(
-            SyncMessageType.MAC_ROTATION_SYNC,
-            target_id,
-            {"test": "data"}
+            SyncMessageType.MAC_ROTATION_SYNC, target_id, {"test": "data"}
         )
 
         # Update manager2's devices to know about manager1
@@ -209,9 +201,7 @@ class TestMACRotationSync:
 
         with patch.object(manager, "_send_sync_message", return_value=True):
             success, message = manager.sync_mac_rotation(
-                "wlan0",
-                "11:22:33:44:55:66",
-                rotation_sequence=1
+                "wlan0", "11:22:33:44:55:66", rotation_sequence=1
             )
 
             assert success is True
@@ -224,9 +214,7 @@ class TestMACRotationSync:
 
         with patch.object(manager, "_send_sync_message", return_value=True):
             success, _ = manager.sync_mac_rotation(
-                "wlan0",
-                "aa:bb:cc:dd:ee:ff",
-                rotation_sequence=5
+                "wlan0", "aa:bb:cc:dd:ee:ff", rotation_sequence=5
             )
 
             assert success is True
@@ -250,9 +238,7 @@ class TestIPRotationSync:
 
         with patch.object(manager, "_send_sync_message", return_value=True):
             success, message = manager.sync_ip_rotation(
-                "wlan0",
-                "10.0.0.50",
-                old_ip="192.168.1.150"
+                "wlan0", "10.0.0.50", old_ip="192.168.1.150"
             )
 
             assert success is True
@@ -369,8 +355,7 @@ class TestDeviceRoles:
         manager = DeviceSyncManager()
 
         success1, _ = manager.pair_device(
-            "Primary", "192.168.1.100",
-            role=DeviceRole.PRIMARY
+            "Primary", "192.168.1.100", role=DeviceRole.PRIMARY
         )
 
         assert success1 is True
@@ -381,8 +366,7 @@ class TestDeviceRoles:
         """Should create SECONDARY device."""
         manager = DeviceSyncManager()
         success, _ = manager.pair_device(
-            "Secondary", "192.168.1.100",
-            role=DeviceRole.SECONDARY
+            "Secondary", "192.168.1.100", role=DeviceRole.SECONDARY
         )
 
         assert success is True

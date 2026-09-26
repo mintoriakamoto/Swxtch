@@ -19,16 +19,14 @@ import secrets
 import socket
 import threading
 from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Tuple, Optional, Dict, List
 from enum import Enum
 import logging
 
-from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
 
 from swxtch.crypto import get_crypto
 
@@ -50,12 +48,14 @@ SYNC_INTERVAL_SECONDS = 60
 
 class DeviceRole(Enum):
     """Device role in sync pair."""
+
     PRIMARY = "primary"  # Initiates rotation
     SECONDARY = "secondary"  # Follows primary
 
 
 class SyncMessageType(Enum):
     """Types of sync messages."""
+
     HANDSHAKE_REQUEST = "handshake_request"
     HANDSHAKE_RESPONSE = "handshake_response"
     MAC_ROTATION_SYNC = "mac_rotation_sync"
@@ -68,6 +68,7 @@ class SyncMessageType(Enum):
 @dataclass
 class Device:
     """Paired device information."""
+
     device_id: str  # Unique identifier (MAC address hash)
     name: str
     role: DeviceRole
@@ -82,6 +83,7 @@ class Device:
 @dataclass
 class SyncMessage:
     """Encrypted sync message between devices."""
+
     message_type: SyncMessageType
     sender_id: str
     receiver_id: str
@@ -96,6 +98,7 @@ class SyncMessage:
 @dataclass
 class RotationState:
     """Synchronized rotation state across devices."""
+
     interface: str
     current_mac: str
     current_ip: Optional[str]
@@ -223,7 +226,9 @@ class DeviceSyncManager:
             logger.error(f"Device pairing failed: {e}")
             return False, f"✗ Pairing failed: {e}"
 
-    def _save_private_key(self, device_id: str, private_key: ed25519.Ed25519PrivateKey) -> None:
+    def _save_private_key(
+        self, device_id: str, private_key: ed25519.Ed25519PrivateKey
+    ) -> None:
         """Save device private key encrypted."""
         private_key_bytes = private_key.private_bytes(
             encoding=serialization.Encoding.Raw,
@@ -283,19 +288,20 @@ class DeviceSyncManager:
         )
 
         # Sign message with HMAC
-        msg_data = json.dumps({
-            "type": message.message_type.value,
-            "sender": message.sender_id,
-            "receiver": message.receiver_id,
-            "timestamp": message.timestamp,
-            "sequence": message.sequence,
-            "payload": message.payload,
-        }).encode()
+        msg_data = json.dumps(
+            {
+                "type": message.message_type.value,
+                "sender": message.sender_id,
+                "receiver": message.receiver_id,
+                "timestamp": message.timestamp,
+                "sequence": message.sequence,
+                "payload": message.payload,
+            }
+        ).encode()
 
         # Use device-specific key for signing
         signature_key = self.crypto.derive_subkey(
-            f"sync_sign_{self.device_id}",
-            length=32
+            f"sync_sign_{self.device_id}", length=32
         )
         message.signature = self.crypto.hmac_sha3_256(signature_key, msg_data).hex()
 
@@ -307,8 +313,6 @@ class DeviceSyncManager:
             logger.warning(f"Unknown sender: {message.sender_id}")
             return False
 
-        device = self.devices[message.sender_id]
-
         # Verify timestamp (prevent replay attacks)
         age = datetime.utcnow().timestamp() - message.timestamp
         if age > 3600:  # 1 hour
@@ -316,19 +320,20 @@ class DeviceSyncManager:
             return False
 
         # Verify signature
-        msg_data = json.dumps({
-            "type": message.message_type.value,
-            "sender": message.sender_id,
-            "receiver": message.receiver_id,
-            "timestamp": message.timestamp,
-            "sequence": message.sequence,
-            "payload": message.payload,
-        }).encode()
+        msg_data = json.dumps(
+            {
+                "type": message.message_type.value,
+                "sender": message.sender_id,
+                "receiver": message.receiver_id,
+                "timestamp": message.timestamp,
+                "sequence": message.sequence,
+                "payload": message.payload,
+            }
+        ).encode()
 
         # Use sender's device key for verification
         signature_key = self.crypto.derive_subkey(
-            f"sync_sign_{message.sender_id}",
-            length=32
+            f"sync_sign_{message.sender_id}", length=32
         )
         expected_sig = self.crypto.hmac_sha3_256(signature_key, msg_data).hex()
 
@@ -381,8 +386,7 @@ class DeviceSyncManager:
             results.append(success)
 
             logger.info(
-                f"MAC rotation synced to {device.name}: "
-                f"{interface} -> {new_mac}"
+                f"MAC rotation synced to {device.name}: " f"{interface} -> {new_mac}"
             )
 
         return all(results) if results else False, "MAC rotation synced to devices"
@@ -458,16 +462,18 @@ class DeviceSyncManager:
         """Get list of paired devices."""
         devices = []
         for device in self.devices.values():
-            devices.append({
-                "device_id": device.device_id,
-                "name": device.name,
-                "role": device.role.value,
-                "host": device.host,
-                "port": device.port,
-                "paired_at": datetime.fromtimestamp(device.paired_at).isoformat(),
-                "last_seen": datetime.fromtimestamp(device.last_seen).isoformat(),
-                "is_online": device.is_online,
-            })
+            devices.append(
+                {
+                    "device_id": device.device_id,
+                    "name": device.name,
+                    "role": device.role.value,
+                    "host": device.host,
+                    "port": device.port,
+                    "paired_at": datetime.fromtimestamp(device.paired_at).isoformat(),
+                    "last_seen": datetime.fromtimestamp(device.last_seen).isoformat(),
+                    "is_online": device.is_online,
+                }
+            )
         return devices
 
     def get_sync_status(self) -> Dict:

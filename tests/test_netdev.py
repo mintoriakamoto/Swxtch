@@ -11,13 +11,15 @@ class TestMACGeneration:
         """Generated MAC should be valid hex format."""
         mac = netdev.random_mac()
         # Format: XX:XX:XX:XX:XX:XX
-        assert re.match(r'^([0-9a-f]{2}:){5}[0-9a-f]{2}$', mac), f"Invalid MAC format: {mac}"
+        assert re.match(
+            r"^([0-9a-f]{2}:){5}[0-9a-f]{2}$", mac
+        ), f"Invalid MAC format: {mac}"
 
     def test_locally_administered_bit(self):
         """First octet should have locally-administered bit set (bit 1 = 1)."""
         for _ in range(100):  # Test multiple generations
             mac = netdev.random_mac()
-            first_octet = int(mac.split(':')[0], 16)
+            first_octet = int(mac.split(":")[0], 16)
             # Bit 1 (locally-administered) should be 1
             assert first_octet & 0x02, f"Locally-administered bit not set in {mac}"
 
@@ -25,15 +27,19 @@ class TestMACGeneration:
         """First octet should have unicast bit set (bit 0 = 0)."""
         for _ in range(100):
             mac = netdev.random_mac()
-            first_octet = int(mac.split(':')[0], 16)
+            first_octet = int(mac.split(":")[0], 16)
             # Bit 0 (multicast) should be 0 for unicast
-            assert not (first_octet & 0x01), f"Multicast bit set in {mac} (should be unicast)"
+            assert not (
+                first_octet & 0x01
+            ), f"Multicast bit set in {mac} (should be unicast)"
 
     def test_mac_uniqueness(self):
         """Generated MACs should be unique (statistically)."""
         macs = {netdev.random_mac() for _ in range(1000)}
         # Should get 1000 unique MACs (collision probability negligible)
-        assert len(macs) == 1000, f"Got {len(macs)} unique MACs out of 1000 (collision detected)"
+        assert (
+            len(macs) == 1000
+        ), f"Got {len(macs)} unique MACs out of 1000 (collision detected)"
 
     def test_mac_randomness(self):
         """Generated MACs should use all 6 octets (not fixed)."""
@@ -41,7 +47,7 @@ class TestMACGeneration:
         octets = [[] for _ in range(6)]
 
         for mac in macs:
-            parts = mac.split(':')
+            parts = mac.split(":")
             for i, part in enumerate(parts):
                 octets[i].append(int(part, 16))
 
@@ -51,7 +57,9 @@ class TestMACGeneration:
             # First octet has 6 bits of freedom (2-7), others have 8
             # With 100 samples, expect high variance
             min_unique = 40 if i == 0 else 45
-            assert unique_values >= min_unique, f"Octet {i} not random enough: {unique_values} unique values"
+            assert (
+                unique_values >= min_unique
+            ), f"Octet {i} not random enough: {unique_values} unique values"
 
 
 class TestMACParsing:
@@ -65,7 +73,7 @@ class TestMACParsing:
             "02:00:00:00:00:01",
         ]
         for mac in test_macs:
-            parts = mac.split(':')
+            parts = mac.split(":")
             assert len(parts) == 6
             for part in parts:
                 assert len(part) == 2
@@ -74,7 +82,7 @@ class TestMACParsing:
     def test_mac_format_consistency(self):
         """Generated MACs should be consistently formatted."""
         mac = netdev.random_mac()
-        parts = mac.split(':')
+        parts = mac.split(":")
         assert len(parts) == 6, "MAC should have 6 octets"
         for part in parts:
             assert len(part) == 2, f"Each octet should be 2 chars: {part}"

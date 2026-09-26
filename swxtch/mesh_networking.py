@@ -7,15 +7,15 @@ Support for multiple mesh network protocols:
 - Lokinet (Session network)
 """
 
-import os
 import secrets
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List
 from dataclasses import dataclass
 
 
 @dataclass
 class MeshNode:
     """Represents a node in the mesh network."""
+
     node_id: str
     address: str
     port: int
@@ -36,6 +36,7 @@ class CJDNSRouting:
     def _generate_node_id(self) -> str:
         """Generate CJDNS node identifier from key."""
         import hashlib
+
         node_hash = hashlib.sha256(self.private_key).digest()
         # CJDNS uses IPv6 format
         return f"fc{node_hash.hex()[:38]}"
@@ -83,7 +84,9 @@ class CJDNSRouting:
             key = hashlib.sha256(hop_bytes).digest()[:16]
             # XOR encryption for simplicity
             extended_key = key * (len(encrypted) // len(key) + 1)
-            encrypted = bytes(a ^ b for a, b in zip(encrypted, extended_key[:len(encrypted)]))
+            encrypted = bytes(
+                a ^ b for a, b in zip(encrypted, extended_key[: len(encrypted)])
+            )
 
         return encrypted
 
@@ -91,6 +94,7 @@ class CJDNSRouting:
     def _hash_peer_id(key: bytes) -> str:
         """Generate peer identifier from key."""
         import hashlib
+
         return hashlib.sha256(key).hexdigest()[:16]
 
 
@@ -106,6 +110,7 @@ class YggdrasilMesh:
     def _derive_mesh_address(self) -> str:
         """Derive mesh address from crypto key."""
         import hashlib
+
         # Yggdrasil uses IPv6-based addressing
         address_hash = hashlib.sha256(self.crypto_key).digest()
         # Format as IPv6: 200-300 prefix for mesh
@@ -185,6 +190,7 @@ class I2PSupport:
     def _generate_destination(self) -> str:
         """Generate I2P destination address."""
         import hashlib
+
         dest_hash = hashlib.sha256(self.destination_key).digest()
         return dest_hash.hex()[:52] + ".b32.i2p"
 
@@ -302,10 +308,10 @@ class MeshNetworkConfig:
     }
 
     SECURITY_RANKING = [
-        "cjdns",      # Highest: native encryption
+        "cjdns",  # Highest: native encryption
         "yggdrasil",  # Very high: distributed
-        "i2p",        # High: unidirectional tunnels
-        "lokinet",    # High: Session-based
+        "i2p",  # High: unidirectional tunnels
+        "lokinet",  # High: Session-based
     ]
 
 

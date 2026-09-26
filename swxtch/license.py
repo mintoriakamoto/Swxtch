@@ -17,7 +17,7 @@ import json
 import re
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Optional, Tuple
+from typing import Tuple
 
 LICENSE_DIR = Path.home() / ".swxtch"
 LICENSE_FILE = LICENSE_DIR / "license.json"
@@ -31,7 +31,9 @@ def get_trial_start() -> datetime:
     if LICENSE_FILE.exists():
         with open(LICENSE_FILE) as f:
             data = json.load(f)
-            return datetime.fromisoformat(data.get("trial_start", datetime.utcnow().isoformat()))
+            return datetime.fromisoformat(
+                data.get("trial_start", datetime.utcnow().isoformat())
+            )
 
     # First run: start trial period
     trial_start = datetime.utcnow()
@@ -83,7 +85,7 @@ def get_subscription_status() -> dict:
             f"✓ Free trial active ({trial_remaining} days remaining)"
             if trial_active
             else "Trial expired — upgrade to $9.99/month to continue"
-        )
+        ),
     }
 
 
@@ -142,19 +144,19 @@ def get_license_info() -> str:
     status = get_subscription_status()
     if status["trial_active"]:
         return (
-            f"🎉 Swxtch Free Trial\n"
+            "🎉 Swxtch Free Trial\n"
             f"Days remaining: {status['trial_remaining_days']}/7\n"
             f"Trial started: {status['trial_start']}\n\n"
-            f"After trial ends, upgrade at: https://[DOMAIN]/pricing\n"
-            f"Price: $9.99/month (cancel anytime)\n"
+            "After trial ends, upgrade at: https://[DOMAIN]/pricing\n"
+            "Price: $9.99/month (cancel anytime)\n"
         )
     else:
         return (
-            f"⏱️ Trial Expired\n\n"
-            f"Upgrade to Swxtch Premium to continue:\n"
-            f"Price: $9.99/month\n"
-            f"Features: Boot verification, MAC/IP rotation, FIPS 206 encryption\n"
-            f"Visit: https://[DOMAIN]/pricing\n"
+            "⏱️ Trial Expired\n\n"
+            "Upgrade to Swxtch Premium to continue:\n"
+            "Price: $9.99/month\n"
+            "Features: Boot verification, MAC/IP rotation, FIPS 206 encryption\n"
+            "Visit: https://[DOMAIN]/pricing\n"
         )
 
 
@@ -178,8 +180,7 @@ def activate_license_key(key: str) -> Tuple[bool, str]:
 
     if not _validate_license_key(key):
         return False, (
-            "Invalid license key. "
-            "Expected format: sk_live_* or sk_prod_*"
+            "Invalid license key. " "Expected format: sk_live_* or sk_prod_*"
         )
 
     LICENSE_DIR.mkdir(exist_ok=True)
@@ -197,8 +198,7 @@ def activate_license_key(key: str) -> Tuple[bool, str]:
             json.dump(subscription_data, f, indent=2)
         LICENSE_FILE.chmod(0o600)
         return True, (
-            "✓ License activated successfully\n"
-            "Swxtch Premium is now active"
+            "✓ License activated successfully\n" "Swxtch Premium is now active"
         )
     except (IOError, OSError) as e:
         return False, f"Failed to save license: {e}"

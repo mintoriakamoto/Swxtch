@@ -18,7 +18,7 @@ import subprocess
 import secrets
 import time
 from pathlib import Path
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict
 from dataclasses import dataclass
 import logging
 
@@ -28,22 +28,23 @@ logger = logging.getLogger(__name__)
 
 # Traffic rates (kbps)
 CONSTANT_RATES = {
-    "low": 64,      # Minimum visible rate
+    "low": 64,  # Minimum visible rate
     "medium": 256,  # Balanced
-    "high": 1024,   # Maximum stealth
+    "high": 1024,  # Maximum stealth
 }
 
 # Padding sizes (bytes)
 PADDING_SIZES = {
-    "small": (16, 64),      # 16-64 bytes
-    "medium": (64, 256),    # 64-256 bytes
-    "large": (256, 1024),   # 256-1024 bytes
+    "small": (16, 64),  # 16-64 bytes
+    "medium": (64, 256),  # 64-256 bytes
+    "large": (256, 1024),  # 256-1024 bytes
 }
 
 
 @dataclass
 class TrafficShapingConfig:
     """Traffic shaping configuration."""
+
     bitrate_kbps: int
     packet_padding: bool
     padding_size_range: Tuple[int, int]
@@ -74,38 +75,48 @@ class TrafficAnalysisManager:
                 ["tc", "qdisc", "show"],
                 capture_output=True,
                 timeout=2,
-                check=False  # tc requires root, so might fail
+                check=False,  # tc requires root, so might fail
             )
             return True
         except Exception:
             return False
 
     def enable_constant_bitrate(
-        self,
-        interface: str = "wlan0",
-        rate_kbps: int = 256
+        self, interface: str = "wlan0", rate_kbps: int = 256
     ) -> Tuple[bool, str]:
         """Enable constant bitrate traffic shaping via tc (traffic control)."""
         try:
             if not self._check_tc():
-                return False, "⚠️  Traffic control (tc) not available - install via: sudo apt install iproute2"
+                return (
+                    False,
+                    "⚠️  Traffic control (tc) not available - install via: sudo apt install iproute2",
+                )
 
             # Create root qdisc (Traffic Control discipline)
             # Token Bucket Filter (TBF) enforces constant rate
             subprocess.run(
                 [
-                    "tc", "qdisc", "add", "dev", interface, "root", "tbf",
+                    "tc",
+                    "qdisc",
+                    "add",
+                    "dev",
+                    interface,
+                    "root",
+                    "tbf",
                     f"rate={rate_kbps}kbit",
                     f"burst={rate_kbps}kb",
-                    "latency=100ms"
+                    "latency=100ms",
                 ],
                 capture_output=True,
-                check=True
+                check=True,
             )
 
             self.config.bitrate_kbps = rate_kbps
             logger.info(f"✓ Constant bitrate {rate_kbps} kbps enabled on {interface}")
-            return True, f"✓ Traffic shaping: {rate_kbps} kbps constant rate (website fingerprinting defeated)"
+            return (
+                True,
+                f"✓ Traffic shaping: {rate_kbps} kbps constant rate (website fingerprinting defeated)",
+            )
 
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to enable constant bitrate: {e}")
@@ -120,7 +131,7 @@ class TrafficAnalysisManager:
             subprocess.run(
                 ["tc", "qdisc", "del", "dev", interface, "root"],
                 capture_output=True,
-                check=False  # Ignore if already absent
+                check=False,  # Ignore if already absent
             )
             logger.info(f"Traffic shaping disabled on {interface}")
             return True, "✓ Traffic shaping disabled"
@@ -130,12 +141,17 @@ class TrafficAnalysisManager:
 
     def add_packet_padding(self, payload_size: int) -> int:
         """Add random padding to packet for size randomization."""
-        padding_size = secrets.randbelow(
-            self.config.padding_size_range[1] - self.config.padding_size_range[0]
-        ) + self.config.padding_size_range[0]
+        padding_size = (
+            secrets.randbelow(
+                self.config.padding_size_range[1] - self.config.padding_size_range[0]
+            )
+            + self.config.padding_size_range[0]
+        )
 
         self.bytes_padded += padding_size
-        logger.debug(f"Added {padding_size} bytes padding to {payload_size} byte payload")
+        logger.debug(
+            f"Added {padding_size} bytes padding to {payload_size} byte payload"
+        )
 
         return payload_size + padding_size
 
@@ -189,7 +205,9 @@ class TrafficAnalysisManager:
             delay_ms = self.calculate_artificial_delay()
             time.sleep(delay_ms / 1000.0)
 
-        logger.debug(f"Simulated burst: {packets} packets, {bytes_sent} bytes in {duration_ms}ms")
+        logger.debug(
+            f"Simulated burst: {packets} packets, {bytes_sent} bytes in {duration_ms}ms"
+        )
         return packets, bytes_sent
 
     def get_traffic_analysis_status(self) -> Dict:

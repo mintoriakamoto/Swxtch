@@ -7,7 +7,7 @@ All payment verification and key generation routed through Tor SOCKS5 proxy.
 import socket
 import os
 import requests
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ TOR_ENABLED = os.getenv("SWXTCH_TOR_ANONYMOUS", "true").lower() == "true"
 # Blockchain API endpoints (use multiple for redundancy)
 BLOCKCHAIN_ENDPOINTS = [
     "https://blockchair.com/api/v1/bitcoin/transactions",  # Uses Tor-friendly CDN
-    "https://chain.so/api/v2/get_tx/BTC",                  # Privacy-friendly
+    "https://chain.so/api/v2/get_tx/BTC",  # Privacy-friendly
 ]
 
 
@@ -57,9 +57,6 @@ class AnonymousPaymentRouter:
         if self.use_tor:
             # PySocks for SOCKS5 support
             try:
-                from requests.adapters import HTTPAdapter
-                from requests_socks import SOCKS5Proxy
-
                 proxy_url = f"socks5://{TOR_SOCKS5_HOST}:{TOR_SOCKS5_PORT}"
                 session.proxies = {
                     "http": proxy_url,
@@ -67,15 +64,19 @@ class AnonymousPaymentRouter:
                 }
 
                 # Add security headers to prevent IP leaks
-                session.headers.update({
-                    "User-Agent": "[BROWSER_AGENT]",
-                    "X-Forwarded-For": "[MASKED_IP]",
-                    "CF-Connecting-IP": "[MASKED_IP]",
-                })
+                session.headers.update(
+                    {
+                        "User-Agent": "[BROWSER_AGENT]",
+                        "X-Forwarded-For": "[MASKED_IP]",
+                        "CF-Connecting-IP": "[MASKED_IP]",
+                    }
+                )
 
                 logger.info("✓ Anonymous session configured (Tor routing)")
             except ImportError:
-                logger.warning("requests-socks not installed - install with: pip install requests[socks]")
+                logger.warning(
+                    "requests-socks not installed - install with: pip install requests[socks]"
+                )
                 self.use_tor = False
 
         return session
@@ -96,9 +97,7 @@ class AnonymousPaymentRouter:
             try:
                 # Route through Tor if available
                 response = self.session.get(
-                    endpoint,
-                    params={"q": transaction_id},
-                    timeout=10
+                    endpoint, params={"q": transaction_id}, timeout=10
                 )
 
                 if response.status_code == 200:
@@ -108,7 +107,10 @@ class AnonymousPaymentRouter:
                     if self._is_confirmed(data):
                         return True, "✓ Payment confirmed on blockchain (Tor-routed)"
                     else:
-                        return False, "⏳ Payment pending confirmation (checking via Tor)"
+                        return (
+                            False,
+                            "⏳ Payment pending confirmation (checking via Tor)",
+                        )
 
             except requests.exceptions.RequestException as e:
                 logger.debug(f"Endpoint {endpoint} unavailable: {e}")
@@ -132,7 +134,9 @@ class AnonymousPaymentRouter:
         uri = f"bitcoin:{wallet}?amount={amount}&label=[MASKED]%20Premium"
 
         if self.use_tor:
-            logger.info("⚠️  Payment URI generated - use Bitcoin privacy wallet (Wasabi, Samourai)")
+            logger.info(
+                "⚠️  Payment URI generated - use Bitcoin privacy wallet (Wasabi, Samourai)"
+            )
 
         return uri
 
@@ -140,11 +144,17 @@ class AnonymousPaymentRouter:
         """Get current anonymity status for payment operations."""
         return {
             "tor_enabled": self.use_tor,
-            "tor_host": f"{TOR_SOCKS5_HOST}:{TOR_SOCKS5_PORT}" if self.use_tor else "disabled",
+            "tor_host": (
+                f"{TOR_SOCKS5_HOST}:{TOR_SOCKS5_PORT}" if self.use_tor else "disabled"
+            ),
             "ip_anonymized": self.use_tor,
             "blockchain_routing": "Tor" if self.use_tor else "Direct (not recommended)",
-            "warning": "Direct internet = IP leaks to blockchain" if not self.use_tor else None,
-            "recommendation": "Enable Tor: tor --socks-port 9050 &" if not self.use_tor else None,
+            "warning": (
+                "Direct internet = IP leaks to blockchain" if not self.use_tor else None
+            ),
+            "recommendation": (
+                "Enable Tor: tor --socks-port 9050 &" if not self.use_tor else None
+            ),
         }
 
 

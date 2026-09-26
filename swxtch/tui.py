@@ -4,7 +4,6 @@ as a standing terminal window."""
 import curses
 import time
 
-from . import netdev
 from .rotator import Rotator
 
 HELP = "[r] rotate now   [t] toggle rotating   [+/-] interval   [q] quit"
@@ -97,7 +96,9 @@ def run(stdscr: "curses._CursesWindow", rotator: Rotator) -> None:
                 row += 1
 
             if h >= 1:
-                stdscr.addstr(h - 1, max(0, (w - len(HELP)) // 2), HELP[: w - 1], curses.A_DIM)
+                stdscr.addstr(
+                    h - 1, max(0, (w - len(HELP)) // 2), HELP[: w - 1], curses.A_DIM
+                )
 
             stdscr.refresh()
 

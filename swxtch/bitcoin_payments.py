@@ -16,8 +16,6 @@ No IP address ever revealed to Bitcoin network nodes or blockchain APIs.
 import json
 import os
 import secrets
-import hashlib
-import hmac
 import base64
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -30,6 +28,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 try:
     from .payment_anonymity import get_anonymous_router
+
     HAS_ANONYMITY = True
 except ImportError:
     HAS_ANONYMITY = False
@@ -51,6 +50,7 @@ LICENSE_KEY_LENGTH = 48  # Total: sk_btc_[44 chars]
 @dataclass
 class BitcoinPayment:
     """Represents a Bitcoin payment for license activation."""
+
     transaction_id: str
     amount_satoshi: int
     paid_timestamp: str
@@ -63,6 +63,7 @@ class BitcoinPayment:
 @dataclass
 class LicenseKey:
     """Generated license key with validity period."""
+
     key: str
     generated_at: str
     expires_at: str
@@ -90,7 +91,9 @@ class BitcoinPaymentManager:
             salt=salt,
             iterations=480_000,
         )
-        wallet_bytes = self.wallet.encode() if isinstance(self.wallet, str) else self.wallet
+        wallet_bytes = (
+            self.wallet.encode() if isinstance(self.wallet, str) else self.wallet
+        )
         key_material = kdf.derive(wallet_bytes)
         key = base64.urlsafe_b64encode(key_material)
         return Fernet(key)
@@ -154,7 +157,9 @@ class BitcoinPaymentManager:
         uri = f"bitcoin:{self.wallet}?amount={amount_btc}&label=Swxtch%20Premium"
         return uri
 
-    def generate_license_key(self, transaction_id: str, payment_address: str) -> LicenseKey:
+    def generate_license_key(
+        self, transaction_id: str, payment_address: str
+    ) -> LicenseKey:
         """Generate cryptographically secure license key after payment confirmation."""
         # Generate random key component (44 chars)
         key_random = secrets.token_urlsafe(33)[:44]
@@ -213,7 +218,10 @@ class BitcoinPaymentManager:
             if data.get("status") == "confirmed":
                 return True, "✓ Payment confirmed on blockchain"
             elif data.get("status") == "pending":
-                return False, "⏳ Payment pending confirmation (usually 20 minutes for 2 confirmations)"
+                return (
+                    False,
+                    "⏳ Payment pending confirmation (usually 20 minutes for 2 confirmations)",
+                )
             else:
                 return False, "Payment not found"
 
@@ -255,11 +263,13 @@ class BitcoinPaymentManager:
     def get_payment_status(self) -> Dict:
         """Get overall payment and license status."""
         active_licenses = sum(
-            1 for data in self.payment_history.values()
+            1
+            for data in self.payment_history.values()
             if data.get("status") == "active"
         )
         expired_licenses = sum(
-            1 for data in self.payment_history.values()
+            1
+            for data in self.payment_history.values()
             if data.get("status") == "expired"
         )
 

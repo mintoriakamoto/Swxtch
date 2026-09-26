@@ -17,11 +17,10 @@ What you see: normal HTTPS connections working seamlessly
 Impossible to track same user across connections based on TLS behavior.
 """
 
-import json
 import secrets
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 import logging
 
@@ -124,6 +123,7 @@ BROWSER_HEADERS = {
 @dataclass
 class TLSProfile:
     """Represents a TLS connection profile."""
+
     tls_version: str
     ciphers: List[str]
     curves: List[str]
@@ -145,10 +145,7 @@ class TLSFingerprintManager:
         """Check if OpenSSL is available."""
         try:
             subprocess.run(
-                ["openssl", "version"],
-                capture_output=True,
-                timeout=2,
-                check=True
+                ["openssl", "version"], capture_output=True, timeout=2, check=True
             )
             return True
         except Exception:
@@ -191,13 +188,15 @@ class TLSFingerprintManager:
             curves=curves,
             signature_algs=sig_algs,
             user_agent=user_agent,
-            http_headers=http_headers
+            http_headers=http_headers,
         )
 
         self.current_profile = profile
         self.profile_count += 1
 
-        logger.debug(f"Generated TLS profile #{self.profile_count}: TLS {tls_version}, {len(ciphers)} ciphers")
+        logger.debug(
+            f"Generated TLS profile #{self.profile_count}: TLS {tls_version}, {len(ciphers)} ciphers"
+        )
         return profile
 
     def get_current_profile(self) -> TLSProfile:

@@ -19,6 +19,7 @@ class TestDNSPrivacyManager:
     def reset_singleton(self):
         """Reset global singleton before each test."""
         import swxtch.dns_privacy
+
         swxtch.dns_privacy._dns_manager = None
         yield
         swxtch.dns_privacy._dns_manager = None

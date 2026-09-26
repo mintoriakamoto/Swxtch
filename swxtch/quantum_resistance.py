@@ -23,7 +23,9 @@ class QuantumResistantCore:
         # SHA-3 based (NIST-approved post-quantum hash)
         self.hash_algorithm = "sha3_256"
 
-    def hash_payment_record(self, transaction_id: str, amount: int, timestamp: str) -> bytes:
+    def hash_payment_record(
+        self, transaction_id: str, amount: int, timestamp: str
+    ) -> bytes:
         """Create quantum-safe hash of payment record."""
         data = f"{transaction_id}:{amount}:{timestamp}".encode()
         # SHA-3 is believed quantum-resistant (hash-based)
@@ -52,14 +54,10 @@ class QuantumResistantCore:
     def hybrid_encrypt_signature(self, message: str) -> Dict:
         """Create hybrid signature (classical + quantum-safe)."""
         # Classical: HMAC-SHA256
-        classical_sig = hashlib.sha256(
-            self.wallet.encode() + message.encode()
-        ).digest()
+        classical_sig = hashlib.sha256(self.wallet.encode() + message.encode()).digest()
 
         # Quantum-safe: SHA-3 based
-        quantum_sig = hashlib.sha3_256(
-            self.wallet.encode() + message.encode()
-        ).digest()
+        quantum_sig = hashlib.sha3_256(self.wallet.encode() + message.encode()).digest()
 
         return {
             "classical": classical_sig.hex(),
@@ -72,7 +70,9 @@ class LatticeBasedKeys:
     """Lattice-based key generation (post-quantum)."""
 
     @staticmethod
-    def generate_lattice_key(wallet: str, security_level: int = 256) -> Tuple[bytes, bytes]:
+    def generate_lattice_key(
+        wallet: str, security_level: int = 256
+    ) -> Tuple[bytes, bytes]:
         """Generate lattice-based keypair."""
         # NTRU-like approach using hash-based lattice
         # In production: use liboqs library
@@ -199,7 +199,7 @@ class QuantumThreatModel:
 
         # Derive multiple variants
         for i in range(10):
-            variant_key = hashlib.sha3_256(primary_key + i.to_bytes(32, 'big')).digest()
+            variant_key = hashlib.sha3_256(primary_key + i.to_bytes(32, "big")).digest()
             backup_keys[f"variant_{i}"] = variant_key
 
         return backup_keys
@@ -212,9 +212,7 @@ class ZeroKnowledgeProofs:
     def prove_payment_received(txid: str, amount: int, secret: str) -> Dict:
         """Create ZK proof of payment without revealing details."""
         # Simplified ZK proof using hash commitments
-        commitment = hashlib.sha3_256(
-            f"{txid}:{amount}:{secret}".encode()
-        ).digest()
+        commitment = hashlib.sha3_256(f"{txid}:{amount}:{secret}".encode()).digest()
 
         # Challenge-response
         challenge = secrets.token_bytes(32)
@@ -230,7 +228,6 @@ class ZeroKnowledgeProofs:
     def verify_zk_proof(proof: Dict, challenge: bytes) -> bool:
         """Verify ZK proof."""
         commitment = bytes.fromhex(proof["commitment"])
-        proof_challenge = bytes.fromhex(proof["challenge"])
         response = bytes.fromhex(proof["response"])
 
         # Verify proof structure
@@ -249,7 +246,7 @@ class MultiSignatureScheme:
 
         for i in range(shares):
             nonce = secrets.token_bytes(32)
-            share = hashlib.sha3_256(secret + nonce + i.to_bytes(1, 'big')).digest()
+            share = hashlib.sha3_256(secret + nonce + i.to_bytes(1, "big")).digest()
             secret_shares.append(share)
 
         return secret_shares

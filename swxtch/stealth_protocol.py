@@ -15,11 +15,10 @@ Packets are indistinguishable from random network noise.
 import secrets
 import struct
 import time
-import hashlib
 from pathlib import Path
-from typing import Tuple, Optional, Dict, List, Any
+from typing import Tuple, Optional, Dict, Any
 from dataclasses import dataclass
-from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305, AESGCM
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.backends import default_backend
@@ -30,12 +29,12 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 logger = logging.getLogger(__name__)
 
 # Stealth packet magic (changes per packet)
-STEALTH_MAGIC = b"\x00\xFF\x00\xFF"  # Never the same twice
+STEALTH_MAGIC = b"\x00\xff\x00\xff"  # Never the same twice
 
 # Stealth address space (NOT standard IPv4/IPv6)
 # These are pseudo-addresses that don't resolve to real networks
 STEALTH_ADDRESS_SPACE = {
-    "base": "240.0.0.0/4",      # Reserved, never routable
+    "base": "240.0.0.0/4",  # Reserved, never routable
     "range": (0xF0000000, 0xFFFFFFFF),  # 240.0.0.0 - 255.255.255.255
 }
 
@@ -43,6 +42,7 @@ STEALTH_ADDRESS_SPACE = {
 @dataclass
 class StealthPacket:
     """Represents a stealth protocol packet."""
+
     version: int
     packet_id: bytes  # Random, unique per packet
     encryption_key: bytes  # Rotating, per-packet
@@ -55,6 +55,7 @@ class StealthPacket:
 @dataclass
 class StealthAddress:
     """Stealth network address (never looks like real IP)."""
+
     value: bytes  # 4 bytes for stealth IPv4-like address
     rotation_count: int
     entropy: bytes
@@ -82,11 +83,7 @@ class StealthProtocol:
         value = struct.pack("!I", secrets.randbelow(0x10000000) | 0xF0000000)
         entropy = secrets.token_bytes(16)
 
-        return StealthAddress(
-            value=value,
-            rotation_count=0,
-            entropy=entropy
-        )
+        return StealthAddress(value=value, rotation_count=0, entropy=entropy)
 
     def rotate_stealth_address(self) -> StealthAddress:
         """Generate new stealth address (new identity per rotation)."""
@@ -102,7 +99,7 @@ class StealthProtocol:
             length=32,  # 256-bit key
             salt=struct.pack("!I", sequence),
             info=b"stealth_packet_key",
-            backend=default_backend()
+            backend=default_backend(),
         )
         key = hkdf.derive(self.master_key)
 
@@ -139,10 +136,12 @@ class StealthProtocol:
             nonce=nonce,
             ciphertext=ciphertext,
             timestamp=time.time(),
-            magic=magic
+            magic=magic,
         )
 
-        logger.debug(f"Encrypted stealth packet #{self.packet_count}: {len(ciphertext)} bytes")
+        logger.debug(
+            f"Encrypted stealth packet #{self.packet_count}: {len(ciphertext)} bytes"
+        )
         return packet
 
     def decrypt_stealth_packet(self, packet: StealthPacket) -> Optional[bytes]:
@@ -151,7 +150,9 @@ class StealthProtocol:
             cipher = ChaCha20Poly1305(packet.encryption_key)
 
             # Reconstruct AAD
-            aad = struct.pack("!IB", self.packet_count, packet.version) + packet.packet_id
+            aad = (
+                struct.pack("!IB", self.packet_count, packet.version) + packet.packet_id
+            )
 
             plaintext = cipher.decrypt(packet.nonce, packet.ciphertext, aad)
             return plaintext
@@ -165,13 +166,13 @@ class StealthProtocol:
         #         timestamp(8) | ciphertext_len(4) | ciphertext(N)
 
         serialized = (
-            packet.magic +
-            struct.pack("!B", packet.version) +
-            packet.packet_id +
-            packet.nonce +
-            struct.pack("!d", packet.timestamp) +
-            struct.pack("!I", len(packet.ciphertext)) +
-            packet.ciphertext
+            packet.magic
+            + struct.pack("!B", packet.version)
+            + packet.packet_id
+            + packet.nonce
+            + struct.pack("!d", packet.timestamp)
+            + struct.pack("!I", len(packet.ciphertext))
+            + packet.ciphertext
         )
 
         return serialized
@@ -183,25 +184,25 @@ class StealthProtocol:
                 return None
 
             offset = 0
-            magic = data[offset:offset+4]
+            magic = data[offset : offset + 4]
             offset += 4
 
-            version = struct.unpack("!B", data[offset:offset+1])[0]
+            version = struct.unpack("!B", data[offset : offset + 1])[0]
             offset += 1
 
-            packet_id = data[offset:offset+16]
+            packet_id = data[offset : offset + 16]
             offset += 16
 
-            nonce = data[offset:offset+12]
+            nonce = data[offset : offset + 12]
             offset += 12
 
-            timestamp = struct.unpack("!d", data[offset:offset+8])[0]
+            timestamp = struct.unpack("!d", data[offset : offset + 8])[0]
             offset += 8
 
-            ciphertext_len = struct.unpack("!I", data[offset:offset+4])[0]
+            ciphertext_len = struct.unpack("!I", data[offset : offset + 4])[0]
             offset += 4
 
-            ciphertext = data[offset:offset+ciphertext_len]
+            ciphertext = data[offset : offset + ciphertext_len]
 
             packet = StealthPacket(
                 version=version,
@@ -210,7 +211,7 @@ class StealthProtocol:
                 nonce=nonce,
                 ciphertext=ciphertext,
                 timestamp=timestamp,
-                magic=magic
+                magic=magic,
             )
 
             return packet
@@ -286,7 +287,9 @@ class StealthTunnel:
         serialized = self.protocol.serialize_stealth_packet(packet)
 
         self.packets_tunneled += 1
-        logger.debug(f"Tunneled packet #{self.packets_tunneled}: {len(serialized)} bytes (encrypted)")
+        logger.debug(
+            f"Tunneled packet #{self.packets_tunneled}: {len(serialized)} bytes (encrypted)"
+        )
 
         return serialized
 
@@ -307,11 +310,13 @@ class StealthTunnel:
     def get_tunnel_status(self) -> Dict[str, Any]:
         """Get tunnel status."""
         status = self.protocol.get_stealth_status()
-        status.update({
-            "tunnel_active": self.tunnel_active,
-            "exit_node": self.exit_node,
-            "packets_tunneled": self.packets_tunneled,
-        })
+        status.update(
+            {
+                "tunnel_active": self.tunnel_active,
+                "exit_node": self.exit_node,
+                "packets_tunneled": self.packets_tunneled,
+            }
+        )
         return status
 
 

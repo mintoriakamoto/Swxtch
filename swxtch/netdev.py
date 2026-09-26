@@ -76,7 +76,7 @@ def set_mac(iface: str, mac: str) -> tuple[bool, str]:
 
     if managed_by_nm and _has("nmcli"):
         # nmcli can set the device down/up itself and re-associate cleanly.
-        r = _run(["nmcli", "device", "disconnect", iface])
+        _run(["nmcli", "device", "disconnect", iface])
         set_r = _run(["ip", "link", "set", "dev", iface, "address", mac])
         if set_r.returncode != 0:
             _run(["nmcli", "device", "connect", iface])

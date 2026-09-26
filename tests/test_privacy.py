@@ -181,7 +181,9 @@ class TestPrivacyStatus:
     def test_privacy_status_no_config(self, mock_run):
         """Should handle missing privacy config gracefully."""
         mock_run.return_value = (True, "")
-        with patch("swxtch.privacy.PRIVACY_CONFIG_FILE", Path("/nonexistent/config.json")):
+        with patch(
+            "swxtch.privacy.PRIVACY_CONFIG_FILE", Path("/nonexistent/config.json")
+        ):
             status = privacy.get_privacy_status()
             assert status["dhcp_privacy"] is False
             assert status["dns_privacy"] is False
@@ -240,6 +242,8 @@ class TestPrivacyIntegration:
         ]
 
         for vector in vectors:
-            assert hasattr(privacy, "prevent_ipv4_leaks") or \
-                   hasattr(privacy, "configure_dhcp_privacy") or \
-                   hasattr(privacy, "configure_dns_privacy")
+            assert (
+                hasattr(privacy, "prevent_ipv4_leaks")
+                or hasattr(privacy, "configure_dhcp_privacy")
+                or hasattr(privacy, "configure_dns_privacy")
+            )

@@ -19,6 +19,7 @@ class TestTrafficAnalysisManager:
     def reset_singleton(self):
         """Reset global singleton before each test."""
         import swxtch.traffic_analysis
+
         swxtch.traffic_analysis._traffic_manager = None
         yield
         swxtch.traffic_analysis._traffic_manager = None

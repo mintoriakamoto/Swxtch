@@ -22,7 +22,9 @@ class TestStealthAddress:
     def test_initialization(self):
         """Should initialize stealth address."""
         value = struct.pack("!I", 0xF0000001)
-        addr = StealthAddress(value=value, rotation_count=0, entropy=secrets.token_bytes(16))
+        addr = StealthAddress(
+            value=value, rotation_count=0, entropy=secrets.token_bytes(16)
+        )
 
         assert addr.rotation_count == 0
         assert len(addr.entropy) == 16
@@ -31,7 +33,9 @@ class TestStealthAddress:
         """Should convert to pseudo-dotted format."""
         # Create address in stealth range
         value = struct.pack("!I", 0xF0000001)
-        addr = StealthAddress(value=value, rotation_count=0, entropy=secrets.token_bytes(16))
+        addr = StealthAddress(
+            value=value, rotation_count=0, entropy=secrets.token_bytes(16)
+        )
 
         str_repr = str(addr)
         parts = str_repr.split(".")
@@ -41,7 +45,9 @@ class TestStealthAddress:
     def test_stealth_address_in_unroutable_space(self):
         """Should generate addresses in 240.0.0.0/4 range."""
         value = struct.pack("!I", 0xF0000001)
-        addr = StealthAddress(value=value, rotation_count=0, entropy=secrets.token_bytes(16))
+        addr = StealthAddress(
+            value=value, rotation_count=0, entropy=secrets.token_bytes(16)
+        )
 
         unpacked = struct.unpack("!I", addr.value)[0]
         # Check that first 4 bits are 1111 (0xF)
@@ -60,7 +66,7 @@ class TestStealthPacket:
             nonce=secrets.token_bytes(12),
             ciphertext=b"encrypted",
             timestamp=1234567890.0,
-            magic=secrets.token_bytes(4)
+            magic=secrets.token_bytes(4),
         )
 
         assert packet.version == 1
@@ -77,7 +83,7 @@ class TestStealthPacket:
             nonce=secrets.token_bytes(12),
             ciphertext=b"data",
             timestamp=1234567890.0,
-            magic=secrets.token_bytes(4)
+            magic=secrets.token_bytes(4),
         )
 
         packet2 = StealthPacket(
@@ -87,7 +93,7 @@ class TestStealthPacket:
             nonce=secrets.token_bytes(12),
             ciphertext=b"data",
             timestamp=1234567890.0,
-            magic=secrets.token_bytes(4)
+            magic=secrets.token_bytes(4),
         )
 
         assert packet1.packet_id != packet2.packet_id
@@ -206,7 +212,7 @@ class TestStealthProtocol:
         magic = serialized[:4]
         # Magic should be random (very unlikely to be all zeros or all ones)
         assert magic != b"\x00\x00\x00\x00"
-        assert magic != b"\xFF\xFF\xFF\xFF"
+        assert magic != b"\xff\xff\xff\xff"
 
     def test_deserialize_stealth_packet(self):
         """Should deserialize bytes back to packet."""
@@ -268,6 +274,7 @@ class TestStealthTunnel:
     def reset_singleton(self):
         """Reset global singleton before each test."""
         import swxtch.stealth_protocol
+
         swxtch.stealth_protocol._stealth_tunnel = None
         yield
         swxtch.stealth_protocol._stealth_tunnel = None

@@ -3,10 +3,9 @@
 Multiple redundant anonymity layers, quantum-resistant crypto, and failsafes.
 """
 
-import os
 import secrets
 import hashlib
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -15,14 +14,14 @@ import base64
 
 # Network routing redundancy
 TOR_HOSTS = [
-    ("127.0.0.1", 9050),      # Primary Tor
-    ("127.0.0.1", 9051),      # Secondary Tor
-    ("127.0.0.1", 9052),      # Backup Tor
+    ("127.0.0.1", 9050),  # Primary Tor
+    ("127.0.0.1", 9051),  # Secondary Tor
+    ("127.0.0.1", 9052),  # Backup Tor
 ]
 
 I2P_HOSTS = [
-    ("127.0.0.1", 4447),      # Primary I2P
-    ("127.0.0.1", 4448),      # Backup I2P
+    ("127.0.0.1", 4447),  # Primary I2P
+    ("127.0.0.1", 4448),  # Backup I2P
 ]
 
 YGGDRASIL_ENDPOINT = "127.0.0.1:9050"  # Mesh network fallback
@@ -42,7 +41,9 @@ class QuantumResistantSigning:
         signature = self.private_key.sign(message)
         return signature
 
-    def verify_payment(self, transaction_id: str, amount: int, signature: bytes) -> bool:
+    def verify_payment(
+        self, transaction_id: str, amount: int, signature: bytes
+    ) -> bool:
         """Verify payment signature."""
         try:
             message = f"{transaction_id}:{amount}".encode()
@@ -102,7 +103,9 @@ class MultiLayerEncryption:
         # Layer 3: XOR with one-time pad derivative
         layer3_pad = hashlib.sha256(self.layer3_key + secrets.token_bytes(32)).digest()
         extended_pad = layer3_pad * (len(ciphertext2) // len(layer3_pad) + 1)
-        ciphertext3 = bytes(a ^ b for a, b in zip(ciphertext2, extended_pad[:len(ciphertext2)]))
+        ciphertext3 = bytes(
+            a ^ b for a, b in zip(ciphertext2, extended_pad[: len(ciphertext2)])
+        )
 
         # Encode all components
         result = {
@@ -112,6 +115,7 @@ class MultiLayerEncryption:
         }
 
         import json
+
         return base64.urlsafe_b64encode(json.dumps(result).encode()).decode()
 
     def decrypt_triple_layer(self, encrypted: str) -> str:
@@ -127,14 +131,20 @@ class MultiLayerEncryption:
             nonce2 = base64.urlsafe_b64decode(result["nonce2"])
 
             # Reverse Layer 3
-            layer3_pad = hashlib.sha256(self.layer3_key + secrets.token_bytes(32)).digest()
+            layer3_pad = hashlib.sha256(
+                self.layer3_key + secrets.token_bytes(32)
+            ).digest()
             extended_pad = layer3_pad * (len(ciphertext3) // len(layer3_pad) + 1)
-            ciphertext2_with_hmac = bytes(a ^ b for a, b in zip(ciphertext3, extended_pad[:len(ciphertext3)]))
+            ciphertext2_with_hmac = bytes(
+                a ^ b for a, b in zip(ciphertext3, extended_pad[: len(ciphertext3)])
+            )
 
             # Reverse Layer 2
             cipher2 = Cipher(algorithms.ChaCha20(self.layer2_key, nonce2), None)
             decryptor2 = cipher2.decryptor()
-            ciphertext1_with_hmac = decryptor2.update(ciphertext2_with_hmac) + decryptor2.finalize()
+            ciphertext1_with_hmac = (
+                decryptor2.update(ciphertext2_with_hmac) + decryptor2.finalize()
+            )
 
             # Separate ciphertext and HMAC
             ciphertext1 = ciphertext1_with_hmac[:-32]
@@ -200,8 +210,8 @@ class RedundantNetworking:
 
     def __init__(self):
         """Initialize redundant network routing."""
-        self.primary_network = "tor"      # Tor SOCKS5
-        self.secondary_network = "i2p"    # I2P mesh
+        self.primary_network = "tor"  # Tor SOCKS5
+        self.secondary_network = "i2p"  # I2P mesh
         self.tertiary_network = "yggdrasil"  # Yggdrasil mesh
         self.current_network = self.primary_network
 
@@ -241,6 +251,7 @@ class RedundantNetworking:
     def _check_proxy_available(host: str, port: int) -> bool:
         """Check if proxy is available."""
         import socket
+
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(2)
@@ -276,7 +287,9 @@ class DeniableEncryptionVolumes:
         wallet_bytes = wallet.encode() if isinstance(wallet, str) else wallet
         return kdf.derive(wallet_bytes)
 
-    def create_nested_volumes(self, outer_data: str, hidden1_data: str, hidden2_data: str) -> str:
+    def create_nested_volumes(
+        self, outer_data: str, hidden1_data: str, hidden2_data: str
+    ) -> str:
         """Create nested encrypted volumes (3 layers)."""
         # Layer 1: Outer volume (decoy data)
         # Layer 2: Hidden volume 1 (real data, revealed under first coercion)
@@ -287,7 +300,9 @@ class DeniableEncryptionVolumes:
         combined = f"{outer_data}|HIDDEN1:{hidden1_data}|HIDDEN2:{hidden2_data}"
 
         # Encrypt with progressively stronger encryption
-        cipher = Cipher(algorithms.AES(self.outer_key), modes.CBC(secrets.token_bytes(16)))
+        cipher = Cipher(
+            algorithms.AES(self.outer_key), modes.CBC(secrets.token_bytes(16))
+        )
         encryptor = cipher.encryptor()
         padded = combined.encode() + secrets.token_bytes(16)
         ciphertext = encryptor.update(padded) + encryptor.finalize()
@@ -309,11 +324,13 @@ class QuantumDeadManSwitch:
     def record_check_in(self) -> None:
         """Record that user is alive and active."""
         import time
+
         self.last_check_in = time.time()
 
     def is_activated(self) -> bool:
         """Check if dead man's switch should activate."""
         import time
+
         if self.last_check_in is None:
             return False
 
@@ -351,7 +368,7 @@ class LatticeBasedEncryption:
         # Placeholder: XOR with derived key
         derived = hashlib.sha256(public_key + secrets.token_bytes(32)).digest()
         extended = derived * (len(message) // len(derived) + 1)
-        return bytes(a ^ b for a, b in zip(message, extended[:len(message)]))
+        return bytes(a ^ b for a, b in zip(message, extended[: len(message)]))
 
     @staticmethod
     def lattice_decrypt(ciphertext: bytes, private_key: bytes) -> bytes:
@@ -360,7 +377,7 @@ class LatticeBasedEncryption:
         public_key = hashlib.sha256(private_key).digest()
         derived = hashlib.sha256(public_key + secrets.token_bytes(32)).digest()
         extended = derived * (len(ciphertext) // len(derived) + 1)
-        return bytes(a ^ b for a, b in zip(ciphertext, extended[:len(ciphertext)]))
+        return bytes(a ^ b for a, b in zip(ciphertext, extended[: len(ciphertext)]))
 
 
 def strengthen_swxtch_system():

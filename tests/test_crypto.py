@@ -199,7 +199,9 @@ class TestAES256GCM:
         plaintext = b"Data"
 
         encrypted = crypto.encrypt_aes256_gcm(plaintext)
-        encrypted.ciphertext = bytes([encrypted.ciphertext[0] ^ 0xFF]) + encrypted.ciphertext[1:]
+        encrypted.ciphertext = (
+            bytes([encrypted.ciphertext[0] ^ 0xFF]) + encrypted.ciphertext[1:]
+        )
 
         decrypted = crypto.decrypt_aes256_gcm(encrypted)
         assert decrypted is None

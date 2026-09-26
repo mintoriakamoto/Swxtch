@@ -137,7 +137,9 @@ class TestLicenseCheck:
     @patch("swxtch.license.LICENSE_FILE")
     @patch("swxtch.license.is_trial_active")
     @patch("swxtch.license.get_trial_remaining")
-    def test_license_check_active_trial(self, mock_remaining, mock_trial_active, mock_file):
+    def test_license_check_active_trial(
+        self, mock_remaining, mock_trial_active, mock_file
+    ):
         """Should allow access during active trial."""
         mock_file.exists.return_value = False
         mock_trial_active.return_value = True
@@ -195,7 +197,9 @@ class TestLicenseActivation:
 
     def test_activate_success_message(self):
         """Should return success message on valid activation."""
-        success, message = activate_license_key("license_key_tool_test_valid_1234567890")
+        success, message = activate_license_key(
+            "license_key_tool_test_valid_1234567890"
+        )
         assert success is False  # Invalid format
 
         # Test with None to verify error handling

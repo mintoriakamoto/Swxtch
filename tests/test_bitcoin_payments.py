@@ -247,6 +247,7 @@ class TestBitcoinPaymentManager:
 
         # Create new manager instance (simulates restart)
         import swxtch.bitcoin_payments
+
         swxtch.bitcoin_payments._bitcoin_manager = None
         mgr2 = get_bitcoin_manager()
 
@@ -296,6 +297,7 @@ class TestBitcoinPaymentManager:
     def test_payment_history_encryption(self):
         """Test that payment history is encrypted at rest."""
         import os
+
         mgr = BitcoinPaymentManager()
         key = mgr.generate_license_key("tx_encrypt_test", "[BITCOIN_WALLET_MASKED]")
 
@@ -305,10 +307,12 @@ class TestBitcoinPaymentManager:
                 file_content = f.read()
 
             # Encrypted content should NOT contain readable JSON
-            assert "{" not in file_content or "license_key" not in file_content, \
-                "File content should be encrypted, not plain JSON"
-            assert "sk_btc_" not in file_content, \
-                "License key should not be readable in encrypted file"
+            assert (
+                "{" not in file_content or "license_key" not in file_content
+            ), "File content should be encrypted, not plain JSON"
+            assert (
+                "sk_btc_" not in file_content
+            ), "License key should not be readable in encrypted file"
 
     def test_encrypted_data_decryption(self):
         """Test that encrypted data can be decrypted correctly."""
@@ -331,8 +335,9 @@ class TestBitcoinPaymentManager:
         encrypted1 = mgr1._encrypt_data(test_data)
         decrypted2 = mgr2._decrypt_data(encrypted1)
 
-        assert decrypted2 == test_data, \
-            "Same wallet address should decrypt data encrypted by another instance"
+        assert (
+            decrypted2 == test_data
+        ), "Same wallet address should decrypt data encrypted by another instance"
 
     def test_wrong_wallet_cannot_decrypt(self):
         """Test that wrong wallet address cannot decrypt payment history."""
@@ -355,17 +360,22 @@ class TestBitcoinPaymentManager:
     def test_payment_persistence_with_encryption(self):
         """Test that payment history persists correctly with encryption."""
         mgr1 = BitcoinPaymentManager()
-        key1 = mgr1.generate_license_key("tx_persist_encrypt", "[BITCOIN_WALLET_MASKED]")
+        key1 = mgr1.generate_license_key(
+            "tx_persist_encrypt", "[BITCOIN_WALLET_MASKED]"
+        )
 
         # Create new manager instance (simulates restart)
         import swxtch.bitcoin_payments
+
         swxtch.bitcoin_payments._bitcoin_manager = None
         mgr2 = BitcoinPaymentManager()
 
         # Verify encrypted data was persisted and decrypted correctly
         assert "tx_persist_encrypt" in mgr2.payment_history
         stored_key = mgr2.payment_history["tx_persist_encrypt"]["license_key"]
-        assert stored_key == key1.key, "License key should be preserved through encryption/decryption"
+        assert (
+            stored_key == key1.key
+        ), "License key should be preserved through encryption/decryption"
 
     def test_encryption_prevents_tampering(self):
         """Test that encrypted file cannot be tampered with."""
@@ -387,9 +397,11 @@ class TestBitcoinPaymentManager:
 
         # Try to load tampered data
         import swxtch.bitcoin_payments
+
         swxtch.bitcoin_payments._bitcoin_manager = None
         mgr_tampered = BitcoinPaymentManager()
 
         # Should return empty dict due to decryption failure
-        assert len(mgr_tampered.payment_history) == 0, \
-            "Tampered encrypted data should fail to decrypt"
+        assert (
+            len(mgr_tampered.payment_history) == 0
+        ), "Tampered encrypted data should fail to decrypt"

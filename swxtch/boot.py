@@ -3,7 +3,6 @@
 import subprocess
 import sys
 import time
-from pathlib import Path
 from typing import Optional
 
 from . import netdev
@@ -47,7 +46,7 @@ def renew_dhcp(iface: str) -> bool:
         try:
             # Fallback to systemd-networkd
             subprocess.run(
-                ["systemctl", "restart", f"systemd-networkd"],
+                ["systemctl", "restart", "systemd-networkd"],
                 capture_output=True,
                 timeout=5,
             )
@@ -104,7 +103,9 @@ def boot_rotation(iface: Optional[str] = None) -> int:
 
     # Verify MAC change
     mac_record = verify_mac_change(old_mac, new_mac, iface)
-    print(f"[swxtch-boot] MAC verification (SHA3-256): {mac_record['new_mac_hash_sha3_256'][:16]}...")
+    print(
+        f"[swxtch-boot] MAC verification (SHA3-256): {mac_record['new_mac_hash_sha3_256'][:16]}..."
+    )
 
     if "mlkem_encrypted" in mac_record:
         print("[swxtch-boot] MAC change encrypted with MLKEM (FIPS 206)")
@@ -120,7 +121,9 @@ def boot_rotation(iface: Optional[str] = None) -> int:
         if new_ip and new_ip != old_ip:
             print(f"[swxtch-boot] IP changed to: {new_ip}")
             ip_record = verify_ip_change(old_ip, new_ip, iface)
-            print(f"[swxtch-boot] IP verification (SHA3-256): {ip_record['new_ip_hash_sha3_256'][:16]}...")
+            print(
+                f"[swxtch-boot] IP verification (SHA3-256): {ip_record['new_ip_hash_sha3_256'][:16]}..."
+            )
 
             if "mlkem_encrypted" in ip_record:
                 print("[swxtch-boot] IP change encrypted with MLKEM (FIPS 206)")

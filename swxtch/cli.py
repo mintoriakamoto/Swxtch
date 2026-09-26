@@ -10,7 +10,11 @@ from . import dns_privacy
 from . import tls_fingerprint
 from . import traffic_analysis
 from .tui import main_curses
-from .license import check_license, get_license_info, get_subscription_status, activate_license_key
+from .license import (
+    check_license,
+    get_license_info,
+    activate_license_key,
+)
 from .bitcoin_payments import get_bitcoin_manager
 
 TERMINALS = [
@@ -36,7 +40,9 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         prog="swxtch",
         description="Rotate your Wi-Fi MAC address on Linux, like iOS's Private Wi-Fi Address.",
     )
-    p.add_argument("-i", "--interface", help="Wi-Fi interface to rotate (auto-detected if omitted)")
+    p.add_argument(
+        "-i", "--interface", help="Wi-Fi interface to rotate (auto-detected if omitted)"
+    )
     p.add_argument(
         "--interval",
         type=int,
@@ -48,30 +54,88 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="Relaunch swxtch inside a new terminal window and exit this shell",
     )
-    p.add_argument("--list", action="store_true", help="List detected Wi-Fi interfaces and exit")
-    p.add_argument("--license", action="store_true", help="Show license and trial status")
+    p.add_argument(
+        "--list", action="store_true", help="List detected Wi-Fi interfaces and exit"
+    )
+    p.add_argument(
+        "--license", action="store_true", help="Show license and trial status"
+    )
     p.add_argument("--subscribe", action="store_true", help="Open subscription page")
-    p.add_argument("--activate", metavar="KEY", help="Activate a license key (sk_live_* or sk_btc_* format)")
-    p.add_argument("--pay-bitcoin", action="store_true", help="Generate Bitcoin payment request for 30-day license")
-    p.add_argument("--check-payment", metavar="TXID", help="Check Bitcoin payment confirmation status")
-    p.add_argument("--verify-btc-key", metavar="KEY", help="Verify Bitcoin license key validity")
-    p.add_argument("--auto-renew", metavar="KEY", help="Enable auto-renewal on Bitcoin license key")
-    p.add_argument("--disable-renewal", metavar="KEY", help="Disable auto-renewal on license key")
-    p.add_argument("--privacy", action="store_true", help="Enable advanced privacy hardening (DHCP, DNS, VPN checks)")
-    p.add_argument("--privacy-status", action="store_true", help="Show privacy hardening status")
-    p.add_argument("--verify-privacy", action="store_true", help="Run comprehensive privacy verification")
+    p.add_argument(
+        "--activate",
+        metavar="KEY",
+        help="Activate a license key (sk_live_* or sk_btc_* format)",
+    )
+    p.add_argument(
+        "--pay-bitcoin",
+        action="store_true",
+        help="Generate Bitcoin payment request for 30-day license",
+    )
+    p.add_argument(
+        "--check-payment",
+        metavar="TXID",
+        help="Check Bitcoin payment confirmation status",
+    )
+    p.add_argument(
+        "--verify-btc-key", metavar="KEY", help="Verify Bitcoin license key validity"
+    )
+    p.add_argument(
+        "--auto-renew", metavar="KEY", help="Enable auto-renewal on Bitcoin license key"
+    )
+    p.add_argument(
+        "--disable-renewal", metavar="KEY", help="Disable auto-renewal on license key"
+    )
+    p.add_argument(
+        "--privacy",
+        action="store_true",
+        help="Enable advanced privacy hardening (DHCP, DNS, VPN checks)",
+    )
+    p.add_argument(
+        "--privacy-status", action="store_true", help="Show privacy hardening status"
+    )
+    p.add_argument(
+        "--verify-privacy",
+        action="store_true",
+        help="Run comprehensive privacy verification",
+    )
 
     # Deep layer privacy
-    p.add_argument("--dns-tor", action="store_true", help="Enable DNS-over-Tor (hide all DNS queries from ISP)")
-    p.add_argument("--dns-multi", action="store_true", help="Enable multi-DNS provider rotation")
-    p.add_argument("--tls-randomize", action="store_true", help="Enable TLS fingerprint randomization")
-    p.add_argument("--traffic-shape", action="store_true", help="Enable constant-bitrate traffic shaping")
-    p.add_argument("--deep-privacy", action="store_true", help="Enable ALL deep layer privacy (DNS+TLS+Traffic)")
+    p.add_argument(
+        "--dns-tor",
+        action="store_true",
+        help="Enable DNS-over-Tor (hide all DNS queries from ISP)",
+    )
+    p.add_argument(
+        "--dns-multi", action="store_true", help="Enable multi-DNS provider rotation"
+    )
+    p.add_argument(
+        "--tls-randomize",
+        action="store_true",
+        help="Enable TLS fingerprint randomization",
+    )
+    p.add_argument(
+        "--traffic-shape",
+        action="store_true",
+        help="Enable constant-bitrate traffic shaping",
+    )
+    p.add_argument(
+        "--deep-privacy",
+        action="store_true",
+        help="Enable ALL deep layer privacy (DNS+TLS+Traffic)",
+    )
 
     # Multi-device sync
-    p.add_argument("--pair-device", metavar="NAME:HOST", help="Pair a second PC (format: DeviceName:[PRIVATE_IP])")
-    p.add_argument("--sync-status", action="store_true", help="Show multi-device sync status")
-    p.add_argument("--paired-devices", action="store_true", help="List all paired devices")
+    p.add_argument(
+        "--pair-device",
+        metavar="NAME:HOST",
+        help="Pair a second PC (format: DeviceName:[PRIVATE_IP])",
+    )
+    p.add_argument(
+        "--sync-status", action="store_true", help="Show multi-device sync status"
+    )
+    p.add_argument(
+        "--paired-devices", action="store_true", help="List all paired devices"
+    )
     p.add_argument("--unpair-device", metavar="DEVICE_ID", help="Unpair a device")
     return p.parse_args(argv)
 
@@ -95,7 +159,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.privacy:
         if not netdev.is_root():
-            print("Privacy hardening requires root privileges (try: sudo swxtch --privacy).", file=sys.stderr)
+            print(
+                "Privacy hardening requires root privileges (try: sudo swxtch --privacy).",
+                file=sys.stderr,
+            )
             return 1
 
         iface = args.interface
@@ -142,13 +209,18 @@ def main(argv: list[str] | None = None) -> int:
         all_good, report = privacy.verify_privacy_hardening()
         print("\n🔐 Privacy Verification Report\n")
         print(report)
-        print(f"\n{'✓ All privacy checks passed!' if all_good else '⚠️  Some privacy checks failed - review above'}\n")
+        print(
+            f"\n{'✓ All privacy checks passed!' if all_good else '⚠️  Some privacy checks failed - review above'}\n"
+        )
         return 0 if all_good else 1
 
     # Deep layer privacy (Application layer)
     if args.dns_tor:
         if not netdev.is_root():
-            print("DNS-over-Tor requires root privileges (try: sudo swxtch --dns-tor).", file=sys.stderr)
+            print(
+                "DNS-over-Tor requires root privileges (try: sudo swxtch --dns-tor).",
+                file=sys.stderr,
+            )
             return 1
 
         dns_mgr = dns_privacy.get_dns_manager()
@@ -159,7 +231,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.dns_multi:
         if not netdev.is_root():
-            print("Multi-DNS requires root privileges (try: sudo swxtch --dns-multi).", file=sys.stderr)
+            print(
+                "Multi-DNS requires root privileges (try: sudo swxtch --dns-multi).",
+                file=sys.stderr,
+            )
             return 1
 
         dns_mgr = dns_privacy.get_dns_manager()
@@ -172,16 +247,19 @@ def main(argv: list[str] | None = None) -> int:
         tls_mgr = tls_fingerprint.get_tls_manager()
         status = tls_mgr.get_tls_status()
         print("\n🔐 TLS Fingerprinting Protection\n")
-        print(f"✓ TLS randomization ENABLED")
+        print("✓ TLS randomization ENABLED")
         print(f"  • Current TLS version: {status['tls_version']}")
         print(f"  • Ciphers available: {status['cipher_count']}")
-        print(f"  • User-Agent rotation: Every request")
+        print("  • User-Agent rotation: Every request")
         print(f"  • Profiles generated: {status['profiles_generated']}")
         return 0
 
     if args.traffic_shape:
         if not netdev.is_root():
-            print("Traffic shaping requires root privileges (try: sudo swxtch --traffic-shape).", file=sys.stderr)
+            print(
+                "Traffic shaping requires root privileges (try: sudo swxtch --traffic-shape).",
+                file=sys.stderr,
+            )
             return 1
 
         iface = args.interface
@@ -200,7 +278,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.deep_privacy:
         if not netdev.is_root():
-            print("Deep privacy requires root privileges (try: sudo swxtch --deep-privacy).", file=sys.stderr)
+            print(
+                "Deep privacy requires root privileges (try: sudo swxtch --deep-privacy).",
+                file=sys.stderr,
+            )
             return 1
 
         print("\n🔐 DEEP LAYER PRIVACY - Initializing All Vectors\n")
@@ -213,7 +294,9 @@ def main(argv: list[str] | None = None) -> int:
         # 2. TLS randomization
         tls_mgr = tls_fingerprint.get_tls_manager()
         profile = tls_mgr.generate_random_profile()
-        print(f"✓ TLS Randomization: {profile.tls_version}, {len(profile.ciphers)} cipher suites")
+        print(
+            f"✓ TLS Randomization: {profile.tls_version}, {len(profile.ciphers)} cipher suites"
+        )
 
         # 3. Traffic shaping
         iface = args.interface
@@ -292,10 +375,12 @@ def main(argv: list[str] | None = None) -> int:
         btc_mgr = get_bitcoin_manager()
         payment_request = btc_mgr.generate_payment_request()
         print("\n₿ Bitcoin Payment Request\n")
-        print(f"Wallet:  {payment_request['wallet_address'][:12]}...{payment_request['wallet_address'][-12:]}")
+        print(
+            f"Wallet:  {payment_request['wallet_address'][:12]}...{payment_request['wallet_address'][-12:]}"
+        )
         print(f"Amount:  {payment_request['amount_btc']} BTC")
         print(f"Satoshi: {payment_request['amount_satoshi']}")
-        print(f"\nValidation QR Code (BIP21):")
+        print("\nValidation QR Code (BIP21):")
         print(f"{payment_request['qr_code_uri']}\n")
         print("Wallet Options:")
         print("  • Phantom (SOL/ETH) → bridge to Bitcoin")
@@ -318,7 +403,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.verify_btc_key:
         btc_mgr = get_bitcoin_manager()
         valid, msg = btc_mgr.verify_license_key(args.verify_btc_key)
-        print(f"\n₿ Bitcoin License Key Status\n")
+        print("\n₿ Bitcoin License Key Status\n")
         print(msg)
         return 0 if valid else 1
 
@@ -355,18 +440,27 @@ def main(argv: list[str] | None = None) -> int:
     if not iface:
         candidates = netdev.list_wifi_interfaces()
         if not candidates:
-            print("No Wi-Fi interfaces found. Pass one with -i/--interface.", file=sys.stderr)
+            print(
+                "No Wi-Fi interfaces found. Pass one with -i/--interface.",
+                file=sys.stderr,
+            )
             return 1
         iface = candidates[0]
 
     if not netdev.is_root():
-        print("swxtch needs root privileges to change MAC addresses (try: sudo swxtch).", file=sys.stderr)
+        print(
+            "swxtch needs root privileges to change MAC addresses (try: sudo swxtch).",
+            file=sys.stderr,
+        )
         return 1
 
     if args.window:
         term = _find_terminal()
         if not term:
-            print("No terminal emulator found; running in this window instead.", file=sys.stderr)
+            print(
+                "No terminal emulator found; running in this window instead.",
+                file=sys.stderr,
+            )
         else:
             cmd = term + [
                 "python3",
